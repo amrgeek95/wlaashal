@@ -7,8 +7,9 @@
 //
 
 import UIKit
-
+import ImageSlideshow
 class sliderTableViewCell: UITableViewCell {
+    @IBOutlet weak var imageSlideShow: ImageSlideshow!
 
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -10,4 +10,9 @@ import UIKit
 
 class homeCollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet weak var iconImage: UIImageView!
+    @IBOutlet weak var containerView: UIView!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var backgroundContainer: UIImageView!
+    var id = ""
 }

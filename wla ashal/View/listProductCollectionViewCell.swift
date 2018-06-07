@@ -7,7 +7,13 @@
 //
 
 import UIKit
-
+import FloatRatingView
 class listProductCollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet weak var userReview: FloatRatingView!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var iconImg: UIImageView!
+   
+    @IBOutlet weak var containerView: UIView!
+    var id = ""
 }

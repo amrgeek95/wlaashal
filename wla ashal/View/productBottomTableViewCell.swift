@@ -9,7 +9,10 @@
 import UIKit
 
 class productBottomTableViewCell: UITableViewCell {
-
+    @IBOutlet weak var locationImg: UIImageView!
+    @IBOutlet weak var userImg: UIImageView!
+    @IBOutlet weak var phoneImg: UIImageView!
+    @IBOutlet weak var chatIcon: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

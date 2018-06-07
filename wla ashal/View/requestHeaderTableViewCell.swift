@@ -10,6 +10,8 @@ import UIKit
 
 class requestHeaderTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var mainImage: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

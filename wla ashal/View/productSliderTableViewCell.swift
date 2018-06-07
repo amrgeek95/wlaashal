@@ -7,9 +7,9 @@
 //
 
 import UIKit
-
+import ImageSlideshow
 class productSliderTableViewCell: UITableViewCell {
-
+ @IBOutlet weak var imageSlideShow: ImageSlideshow!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

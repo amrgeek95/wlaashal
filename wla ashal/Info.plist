@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>wla ashal</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -20,6 +22,29 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSAppTransportSecurity - 2</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>تطبيق ولا اسهل يريد السماح بالصور لامكانية ارفاق صور مع الاعلانات</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Accept To Access Your Location</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Accept To Access Your Location</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>تطبيق ولا اسهل يريد السماح بالصور لامكانية ارفاق صور مع الاعلانات</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>ArbFONTS-Droid-Arabic-Kufi-Bold.ttf</string>
+		<string>ArbFONTS-Droid-Arabic-Kufi.ttf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

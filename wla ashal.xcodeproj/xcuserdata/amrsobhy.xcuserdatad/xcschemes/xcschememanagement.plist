@@ -7,7 +7,25 @@
 		<key>wla ashal.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>27</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>2F8CAFD720B3B794001DC210</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2F8CAFEE20B3B794001DC210</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2F8CAFF920B3B794001DC210</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

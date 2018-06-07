@@ -7,20 +7,149 @@
 //
 
 import UIKit
+import Alamofire
+import MBProgressHUD
+import SDWebImage
 
-class homeViewController: UIViewController {
+class homeViewController: SuperParentViewController ,UICollectionViewDelegate , UICollectionViewDataSource {
 
+    @IBOutlet weak var nav_height: NSLayoutConstraint!
+    @IBOutlet weak var homeCollectionView: UICollectionView!
+    @IBOutlet weak var userLabel: UILabel!
+    @IBOutlet weak var adsLabel: UILabel!
+    @IBOutlet weak var pointLabel: UILabel!
+    @IBOutlet weak var adsBtn: UIButton!
+    @IBOutlet weak var pointBtn: UIButton!
+    @IBOutlet weak var userImage: UIImageView!
+    @IBOutlet weak var navigationBtn: UIButton!
+    
+    var categories = [Dictionary<String,AnyObject>]()
+    var service = ["showTaxi","showModal"]
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+     return self.categories.count
+    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "homeCell", for: indexPath) as? homeCollectionViewCell
+       
+        cell?.iconImage.sd_setImage(with: URL(string: categories[indexPath.row]["image"] as? String ?? ""), placeholderImage: UIImage(named: "car_d"))
+        cell?.titleLabel.text = categories[indexPath.row]["name"] as? String ?? ""
+        cell?.id = categories[indexPath.row]["id"] as? String ?? ""
+        
+        return cell!
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.row  > 1 {
+            let showList = self.storyboard?.instantiateViewController(withIdentifier: "listProductsView") as? listProductsViewController
+            showList?.category_id = categories[indexPath.row]["id"] as? String ?? ""
+            //self.present(showList!, animated: true, completion: nil)
+            self.navigationController?.pushViewController(showList!, animated: true)
+        }else{
+            if checkUserData() {
+             
+                self.performSegue(withIdentifier: service[indexPath.row], sender: nil)
+            }else{
+                let loginView = self.storyboard?.instantiateViewController(withIdentifier: "loginView")
+                self.navigationController?.pushViewController(loginView!, animated: true)
+            }
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let yourWidth = CGFloat((collectionView.frame.size.width / 3) - 5 )
+        let yourHeight = yourWidth
+        
+        return CGSize(width: yourWidth, height: yourWidth)
+        
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
+    get_categories()
+        
+        if !checkUserData() {
+            //nav_height: NSLayoutConstraint!
+            
+          userLabel.text = "اضغط هنا للتسجيل"
+             adsLabel.isHidden = true
+             adsBtn.isHidden = true
+             pointBtn.isHidden = true
+             adsLabel.isHidden = true
+             pointLabel.isHidden = true
+            let tapGesture = UITapGestureRecognizer(target:self,action: #selector(self.tapLogin(_:)))
+            self.userLabel.addGestureRecognizer(tapGesture)
+            self.userImage.addGestureRecognizer(tapGesture)
 
+         
+        }else{
+            loadUserData()
+            self.userLabel.text = userData["name"] as? String ?? ""
+            let userImage = userData["image"] as? String ?? ""
+            self.userImage.sd_setImage(with: URL(string: image_url + userImage), placeholderImage: UIImage(named: "annonymus"))
+            self.adsBtn.setTitle("\(userData["ads_count"] as? Int ?? 0)", for: .normal)
+            self.pointBtn.setTitle(userData["points"] as? String ?? "", for: .normal)
+            self.userImage.ImageBorderRadius(border: 0.2, corner: 25)
+             adsLabel.isHidden = false
+           
+             pointLabel.isHidden = false
+        }
+        self.homeCollectionView.delegate = self
+        self.homeCollectionView.dataSource = self
         // Do any additional setup after loading the view.
+         homeCollectionView.semanticContentAttribute = UISemanticContentAttribute.forceRightToLeft
     }
+    func tapLogin(_ sender:UITapGestureRecognizer) {
+        let loginView = self.storyboard?.instantiateViewController(withIdentifier: "loginView")
+        self.navigationController?.pushViewController(loginView!, animated: true)
 
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+    func get_categories(){
+        self.categories.removeAll()
+        MBProgressHUD.showAdded(to: self.view, animated: true)
+        var parameters = [String:AnyObject]()
+        
+        self.categories.append((["name":"تاكسي","id":0,"image":"taxi"] as? [String:AnyObject])!)
+        
+        self.categories.append((["name":"التوصيل","id":0,"image":"car_d"] as? [String:AnyObject])!)
+        var url = base_url + "get_category"
+        Alamofire.request(url, method: .post, parameters: parameters).responseJSON{
+            (response) in
+            MBProgressHUD.hide(for: self.view,animated:true)
+            if let results = response.result.value as? [String:AnyObject]{
+                print(results)
+                
+                if  let result = results["categories"] as? [[String:String]] {
+                    print(result)
+                    for str:[String:String] in result {
+                        print(str)
+                        var each_list = [String:AnyObject]()
+                        each_list["name"] =  str["name"]! as AnyObject
+                        each_list["id"] =  str["id"] as AnyObject
+                        var url_image = str["image"] as?  String ?? ""
+                        each_list["image"] = url_image.replacingOccurrences(of: " ", with: "%20") as AnyObject
+                        self.categories.append(each_list)
+                        print(self.categories)
+                    }
+                    self.homeCollectionView.reloadData()
+                }
+            }
+        }
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isHidden = true
+        self.tabBarController?.tabBar.isHidden = false
+        self.navigationItem.title = ""
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isHidden = false
+
+    }
 
     /*
     // MARK: - Navigation
