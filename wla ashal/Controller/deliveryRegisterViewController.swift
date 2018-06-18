@@ -13,6 +13,9 @@ class deliveryRegisterViewController: SuperParentViewController , UITableViewDel
     var image = [String]()
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
+        if image.count == 0 {
+            return 4
+        }
         return image.count
     }
     /*
@@ -27,7 +30,12 @@ class deliveryRegisterViewController: SuperParentViewController , UITableViewDel
      */
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "addImageCell", for: indexPath as IndexPath) as! addImageCollectionViewCell
-        cell.image.sd_setImage(with: URL(string: image_url + image[indexPath.row] as? String ?? ""), placeholderImage: UIImage(named: "pic_profile"))
+        if image.count == 0 {
+            cell.image.image = UIImage(named: "pic_profile")
+        }else{
+            cell.image.sd_setImage(with: URL(string: image_url + image[indexPath.row] as? String ?? ""), placeholderImage: UIImage(named: "pic_profile"))
+        }
+        
         return cell
     }
     

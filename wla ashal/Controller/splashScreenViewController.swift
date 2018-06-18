@@ -15,7 +15,8 @@ class splashScreenViewController: UIViewController {
     var time = Timer()
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.navigationController?.navigationBar.plainView.semanticContentAttribute = .forceRightToLeft
+
          time = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateCounter), userInfo: nil, repeats: true)
         
         // Do any additional setup after loading the view.

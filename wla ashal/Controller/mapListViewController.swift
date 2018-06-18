@@ -33,14 +33,13 @@ class mapListViewController: UIViewController , UITextFieldDelegate ,CLLocationM
     @IBOutlet private weak var mapCenterPinImage: UIImageView!
     override func viewWillAppear(_ animated: Bool) {
         locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
         // Do any additional setup after loading the view.
         mapView.delegate = self
         
         self.navigationItem.title = "الاعلانات"
         
         self.navigationController?.navigationBar.isHidden = false
-       
+        
         self.locationManager.requestAlwaysAuthorization()
         
         // For use in foreground
@@ -49,30 +48,53 @@ class mapListViewController: UIViewController , UITextFieldDelegate ,CLLocationM
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 4.0)
-            mapView.camera = camera
+            if request == false {
+                let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 15.0)
+                mapView.camera = camera
+                
+                let state_marker = GMSMarker()
+                state_marker.position = CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!)
+                state_marker.title = "موقعي"
+                
+                state_marker.snippet = ""
+                 state_marker.icon = GMSMarker.markerImage(with: UIColor.blue)
+                state_marker.map = mapView
+                showMarker(position: camera.target)
+            }
             
         }else{
-            let camera = GMSCameraPosition.camera(withLatitude: 37.36, longitude: -122.0, zoom: 4.0)
-            mapView.camera = camera
-            
+            if request == false {
+                let alertController = UIAlertController(title: NSLocalizedString("تنبية", comment: ""), message: NSLocalizedString("يجب السماح بتحديد المكان", comment: ""), preferredStyle: .alert)
+                
+                let cancelAction = UIAlertAction(title: NSLocalizedString("الغاء", comment: ""), style: .cancel, handler: nil)
+                let settingsAction = UIAlertAction(title: NSLocalizedString("الاعدادات", comment: ""), style: .default) { (UIAlertAction) in
+                    UIApplication.shared.openURL(NSURL(string: UIApplicationOpenSettingsURLString)! as URL)
+                }
+                
+                
+                alertController.addAction(cancelAction)
+                alertController.addAction(settingsAction)
+                self.present(alertController, animated: true, completion: nil)
+            }
         }
+        print(addressFrom)
         
         for state in addressFrom {
             print(state.latitude)
             print("lat")
             print(state.productName)
             
-            let camera = GMSCameraPosition.camera(withLatitude: state.latitude, longitude: state.longtide, zoom: 4.0)
-          //  mapView.camera = camera
+            let camera = GMSCameraPosition.camera(withLatitude: state.latitude, longitude: state.longtide, zoom: 15.0)
+            
             let state_marker = GMSMarker()
             state_marker.position = CLLocationCoordinate2D(latitude: state.latitude, longitude: state.longtide)
             state_marker.title = state.productName
             
             state_marker.snippet = "\(state.productID)"
             if request == true {
-                
+                mapView.camera = camera
                 state_marker.snippet = "\(state.address)"
+                state_marker.icon = GMSMarker.markerImage(with: UIColor.green)
             }
             state_marker.map = mapView
             markerDict[state.productID] = state_marker
@@ -81,12 +103,106 @@ class mapListViewController: UIViewController , UITextFieldDelegate ,CLLocationM
         
         
     }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(appMovedToForeground), name: Notification.Name.UIApplicationWillEnterForeground, object: nil)
+        
+        self.locationManager.requestAlwaysAuthorization()
+        
+        // For use in foreground
+        self.locationManager.requestWhenInUseAuthorization()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            if request == false {
+                let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 15.0)
+                mapView.camera = camera
+                let state_marker = GMSMarker()
+                state_marker.position = CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!)
+                state_marker.title = "موقعي"
+                
+                state_marker.icon = GMSMarker.markerImage(with: UIColor.blue)
+                state_marker.snippet = ""
+                
+                state_marker.map = mapView
+                showMarker(position: camera.target)
+            }
+            
+        }else{
+            if request == false {
+                let alertController = UIAlertController(title: NSLocalizedString("تنبية", comment: ""), message: NSLocalizedString("يجب السماح بتحديد المكان", comment: ""), preferredStyle: .alert)
+                
+                let cancelAction = UIAlertAction(title: NSLocalizedString("الغاء", comment: ""), style: .cancel, handler: nil)
+                let settingsAction = UIAlertAction(title: NSLocalizedString("الاعدادات", comment: ""), style: .default) { (UIAlertAction) in
+                    UIApplication.shared.openURL(NSURL(string: UIApplicationOpenSettingsURLString)! as URL)
+                }
+                
+                
+                alertController.addAction(cancelAction)
+                alertController.addAction(settingsAction)
+                self.present(alertController, animated: true, completion: nil)
+            }
+            
+        }
+        print(addressFrom)
+        
+        for state in addressFrom {
+            print(state.latitude)
+            print("lat")
+            print(state.productName)
+            
+            let camera = GMSCameraPosition.camera(withLatitude: state.latitude, longitude: state.longtide, zoom: 15.0)
+            // mapView.camera = camera
+            let state_marker = GMSMarker()
+            state_marker.position = CLLocationCoordinate2D(latitude: state.latitude, longitude: state.longtide)
+            state_marker.title = state.productName
+            
+            state_marker.snippet = "\(state.productID)"
+            if request == true {
+                
+                mapView.camera = camera
+                state_marker.snippet = "\(state.address)"
+                state_marker.icon = GMSMarker.markerImage(with: UIColor.green)
+            }
+            
+          
+            state_marker.map = mapView
+            markerDict[state.productID] = state_marker
+            showMarker(position: camera.target)
+        }
         
     }
     
-    
+    func appMovedToForeground() {
+        
+        self.locationManager.requestAlwaysAuthorization()
+        
+        // For use in foreground
+        self.locationManager.requestWhenInUseAuthorization()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            
+            let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 15.0)
+            mapView.camera = camera
+            let state_marker = GMSMarker()
+            state_marker.position = CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!)
+            state_marker.title = "موقعي"
+            
+            state_marker.snippet = ""
+            
+            state_marker.icon = GMSMarker.markerImage(with: UIColor.blue)
+            state_marker.map = mapView
+            showMarker(position: camera.target)
+            
+        }
+        print("App moved to ForeGround!")
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -182,7 +298,7 @@ extension mapListViewController {
             }
             print("exact location")
             print(lines.joined(separator: "\n"))
-           
+            
             // 3
             //  self.addressLabel.text = lines.joined(separator: "\n")
             
@@ -202,11 +318,14 @@ extension mapListViewController: GMSMapViewDelegate {
     }
     func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
         if request == false {
-        let showProduct = self.storyboard?.instantiateViewController(withIdentifier: "productView") as? productViewController
-        showProduct?.product_id = marker.snippet as? String ?? ""
-        print(marker.snippet)
-        
-        self.navigationController?.pushViewController(showProduct!, animated: true)
+            if marker.snippet as? String != "" {
+                let showProduct = self.storyboard?.instantiateViewController(withIdentifier: "productView") as? productViewController
+                showProduct?.product_id = marker.snippet as? String ?? ""
+                print(marker.snippet)
+                
+                self.navigationController?.pushViewController(showProduct!, animated: true)
+            }
+            
         }
     }
     
@@ -232,7 +351,10 @@ extension mapListViewController: GMSMapViewDelegate {
         view.addSubview(lbl1)
         
         let lbl2 = UILabel(frame: CGRect.init(x: lbl1.frame.origin.x, y: lbl1.frame.origin.y + lbl1.frame.size.height + 3, width: view.frame.size.width - 16, height: 15))
-        lbl2.text = "اضغط هنا لمشاهدة الاعلان"
+        if marker.snippet != "" {
+         
+            lbl2.text = "اضغط هنا لمشاهدة الاعلان"
+        }
         if request == true {
             lbl2.text = marker.snippet
         }
@@ -254,7 +376,7 @@ extension mapListViewController: GMSMapViewDelegate {
         print("didEndDragging")
     }
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D){
-     //   marker.position = coordinate
+        //   marker.position = coordinate
     }
     
 }

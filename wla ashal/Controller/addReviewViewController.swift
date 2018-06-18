@@ -45,7 +45,14 @@ class addReviewViewController: SuperParentViewController ,FloatRatingViewDelegat
     @IBAction func sendAction(_ sender: Any) {
         var parameters = [String:AnyObject]()
       
-        
+        guard inputValidation(text: self.comment.text!, message: "يجب كتابة تعليق", view: self.view) else{
+            
+            return
+        }
+        if rate == "0" {
+            self.view.makeToast("يجب اضافة تقييم")
+            return
+        }
         parameters["comment"] = comment.text as AnyObject
         parameters["user_id"] = user_id as AnyObject
         parameters["from_id"] = userData["id"] as AnyObject
@@ -62,11 +69,16 @@ class addReviewViewController: SuperParentViewController ,FloatRatingViewDelegat
             MBProgressHUD.hide(for: self.view,animated:true)
             if let results = response.result.value as? [String:AnyObject]{
                 print(results)
+               
                 if let status = results["status"] as? Bool {
-                  wla_ashal.toastView(messsage: results["message"] as? String ?? "" , view: self.view)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        self.dismiss(animated: true, completion: nil)
+                    let alert = UIAlertController(title: results["message"] as? String ?? "", message: "", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "حسنا", style: UIAlertActionStyle.default, handler:{ (alert: UIAlertAction!) -> Void in
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            self.dismiss(animated: true, completion: nil)
+                        }
                     }
+                    ))
+                    self.present(alert, animated: true, completion: nil)
                 }
             }
         }

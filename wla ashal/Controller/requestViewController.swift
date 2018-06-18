@@ -16,6 +16,8 @@ class requestViewController: SuperParentViewController , UITableViewDelegate , U
     var user_request = [String:AnyObject]()
     var type = ""
     var id = ""
+    var myself = false
+    var accepted = false
     var address = [addressMapProduct]()
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
@@ -42,16 +44,28 @@ class requestViewController: SuperParentViewController , UITableViewDelegate , U
             if section == 0 {
                 return 4
             }
-            else if section == 1 {
-                return 2
-            }
+          
+            else if section <= 2{
                 
-            else if section == 1 {
+                if myself == true {
+                    if accepted == false {
+                        return 0
+                    }
+                }
+                if section == 1 {
+                    return 2
+                }
                 return 1
             }
                 
             else {
-                return 1
+                if accepted == true ||  myself == true {
+                    
+                    return 0
+                }else{
+                 
+                    return 1
+                }
             }
         }
         
@@ -229,8 +243,15 @@ class requestViewController: SuperParentViewController , UITableViewDelegate , U
             if  let results = response.result.value as? [String:AnyObject] {
                 if let success = results["status"] as? Bool {
                     if success == true {
-                        wla_ashal.toastView(messsage: results["message"] as? String ?? "", view: self.view)
-                        self.navigationController?.popViewController(animated: true)
+                        
+                        let alert = UIAlertController(title: results["message"] as? String ?? "", message: "", preferredStyle: UIAlertControllerStyle.alert)
+                        alert.addAction(UIAlertAction(title: "حسنا", style: UIAlertActionStyle.default, handler:{ (alert: UIAlertAction!) -> Void in
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                        ))
+                        self.present(alert, animated: true, completion: nil)
+                       
+                       
                     }
                 }
             }
@@ -239,6 +260,7 @@ class requestViewController: SuperParentViewController , UITableViewDelegate , U
     }
     
     func get_request(){
+         self.address.removeAll()
         MBProgressHUD.showAdded(to: self.view, animated: true)
         var parameters = [String: Any]()
         parameters["id"] = id
@@ -262,7 +284,7 @@ class requestViewController: SuperParentViewController , UITableViewDelegate , U
                                 message = "\(request_data["title"]!)"
                                 self.requestData.append(["map":false,"image":"fire" ,"body":message as AnyObject,"title":"الشئ المراد توصيلة "])
                                 message = "\(request_data["city"] as? String ?? "") \(request_data["address"] as? String ?? "")"
-                                self.requestData.append(["map":true,"image":"map_gray" ,"body":message as AnyObject,"title":"مكان الوصول"])
+                                self.requestData.append(["map":true,"image":"map_gray" ,"body":"مكان العميل" as AnyObject,"title":"مكان الوصول"])
                                 
                                 let newAddress = addressMapProduct(longtide: Double(request_data["longtiude"] as? String ?? "0")! , latitude: Double(request_data["lat"] as? String ?? "0")!, address: message, city: request_data["city"] as? String ?? "", productName: "مكان العميل", productID: "")
                                 print(newAddress)
@@ -271,14 +293,16 @@ class requestViewController: SuperParentViewController , UITableViewDelegate , U
                             }else{
                                 
                                 message = "\(request_data["city_from"] as? String ?? "") \(request_data["address_from"] as? String ?? "")"
-                                self.requestData.append(["map":true,"image":"map_gray" ,"body":message as AnyObject,"title":"مكان العميل"])
+                                self.requestData.append(["map":true,"image":"map_gray" ,"body":"مكان العميل" as AnyObject,"title":"مكان العميل"])
                                 let addressFrom = addressMapProduct(longtide: Double(request_data["long_from"] as? String ?? "0")! , latitude: Double(request_data["lat_from"] as? String ?? "0")!, address: message, city: request_data["city_from"] as? String ?? "", productName:"مكان العميل",productID:"")
                                 message = "\(request_data["city_to"] as? String ?? "") \(request_data["address_to"] as? String ?? "")"
-                                self.requestData.append(["map":true,"image":"map_gray" ,"body":message as AnyObject,"title":"مكان الوصول"])
+                                self.requestData.append(["map":true,"image":"map_gray" ,"body":"مكان الوصول" as AnyObject,"title":"مكان الوصول"])
                                 
                                 
                                 let addressTo = addressMapProduct(longtide: Double(request_data["long_to"] as? String ?? "0")! , latitude: Double(request_data["lat_to"] as? String ?? "0")!, address: message, city: request_data["city_to"] as? String ?? "", productName:"مكان الوصول",productID:"")
                                 
+                                print(addressTo)
+                                print(addressFrom)
                                 
                                 self.address.append(addressFrom)
                                 self.address.append(addressTo)
@@ -289,14 +313,51 @@ class requestViewController: SuperParentViewController , UITableViewDelegate , U
                             self.requestData.append(["map":false,"image":"doller_m" as AnyObject,"body":message as AnyObject,"title":"تكلفة الطلب" as AnyObject])
                             
                         }
-                        if let user_data = results["user"] as? [String:AnyObject] {
-                            self.user_request["body"] = user_data["name"] as AnyObject
-                            self.user_request["title"] = "اسم صاحب الطلب " as AnyObject
-                            self.user_request["image"] = "user" as AnyObject
-                            self.user_request["mobile"] = user_data["mobile"] as AnyObject
-                            self.user_request["id"] = user_data["id"] as AnyObject
-                            self.user_request["map"] = false as AnyObject
+                        if let userid =  results["request"]!["user_id"] as? String {
+                            print( userData["id"] as? String )
+                            print(userid)
+                            
+                            if userData["id"] as? String == userid {
+                                self.myself = true
+                                 self.accepted = false
+                                print(results["request"]!["status"] as? String )
+                                if let request_result =  results["request"]!["status"] as? String {
+                                    if request_result == "1" {
+                                      print(results["from"])
+                                    if let user_data = results["from"] as? [String:AnyObject] {
+                                        self.accepted = true
+                                        self.headerData["second"] = "تفاصيل صاحب الخدمة"
+                                        self.user_request["body"] = user_data["name"] as AnyObject
+                                        self.user_request["title"] = "اسم صاحب الخدمة " as AnyObject
+                                        self.user_request["image"] = "user" as AnyObject
+                                        self.user_request["mobile"] = user_data["mobile"] as AnyObject
+                                        self.user_request["id"] = user_data["id"] as AnyObject
+                                        self.user_request["map"] = false as AnyObject
+                                    }
+                                }
+                                }
+                            }else{
+                                if let request_result =  results["request"]!["status"] as? String {
+                                     self.accepted = false
+                                    if let user_data = results["user"] as? [String:AnyObject] {
+                                        
+                                        self.user_request["body"] = user_data["name"] as AnyObject
+                                        self.user_request["title"] = "اسم صاحب الطلب " as AnyObject
+                                        self.user_request["image"] = "user" as AnyObject
+                                        self.user_request["mobile"] = user_data["mobile"] as AnyObject
+                                        self.user_request["id"] = user_data["id"] as AnyObject
+                                        self.user_request["map"] = false as AnyObject
+                                    }
+                                    if request_result == "1" {
+                                         self.accepted = true
+                                        
+                                    }
+                                }
+                                
+                            }
                         }
+                        
+                        
                         self.requestTableView.reloadData()
                     }
                 }

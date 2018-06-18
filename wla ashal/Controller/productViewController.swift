@@ -11,6 +11,8 @@ import Alamofire
 import MBProgressHUD
 import Toast
 import ImageSlideshow
+import Lightbox
+
 
 class productViewController: SuperParentViewController , UITableViewDelegate , UITableViewDataSource{
 
@@ -18,15 +20,20 @@ class productViewController: SuperParentViewController , UITableViewDelegate , U
     var productData = [String:Any]()
     var imageData = [Dictionary<String,Any>]()
     var product_id = ""
+    var address = [addressMapProduct]()
+    
     @IBOutlet weak var productTableView: UITableView!
+    var imagelightbox = [LightboxImage]()
     override func viewDidLoad() {
         super.viewDidLoad()
 get_product()
         self.productTableView.delegate = self
         self.productTableView.dataSource = self
+        self.navigationItem.backBarButtonItem?.title = ""
+        self.navigationItem.title = "تفاصيل الاعلان"
         // Do any additional setup after loading the view.
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -42,7 +49,8 @@ get_product()
             return 200
         }
         else if indexPath.row == 1 {
-            return 250
+            return UITableViewAutomaticDimension
+            
         }else{
             return 200
         }
@@ -71,6 +79,17 @@ get_product()
                 cell.selectionStyle = UITableViewCellSelectionStyle.none
                 cell.imageSlideShow.setImageInputs(arr)
             }
+            for imageLight in imageData {
+                if imageLight["image"] as! String != "" {
+                    if imagelightbox.count != imageData.count {
+                        imagelightbox.append(LightboxImage(imageURL: URL(string: imageLight["image"] as! String)!))
+                        let tapImg = UITapGestureRecognizer(target:self,action: #selector(self.tapImg(_:)))
+                    cell.imageSlideShow.addGestureRecognizer(tapImg)
+                        
+                    }
+                }
+            }
+           
             return cell
         }
         else if indexPath.row == 1 {
@@ -93,8 +112,19 @@ get_product()
             let chatGesture = UITapGestureRecognizer(target: self, action: #selector(self.openChat(_:)))
             cell?.chatIcon.isUserInteractionEnabled = true
             cell?.chatIcon.addGestureRecognizer(chatGesture)
+            
+            let mapGesture = UITapGestureRecognizer(target: self, action: #selector(self.openMap(_:)))
+            cell?.locationImg.isUserInteractionEnabled = true
+            cell?.locationImg.addGestureRecognizer(mapGesture)
             return cell!
         }
+    }
+    func openMap (_ sender:UITapGestureRecognizer) {
+        let showMap = self.storyboard?.instantiateViewController(withIdentifier: "mapListView") as? mapListViewController
+        showMap?.addressFrom = address
+        showMap?.request = true
+        print(address)
+        self.navigationController?.pushViewController(showMap!, animated: true)
     }
     func openChat(_ sender:UITapGestureRecognizer) {
         let showChat = self.storyboard?.instantiateViewController(withIdentifier: "parentChatView") as? parentChatViewController
@@ -112,6 +142,18 @@ get_product()
         }
         
         
+    }
+    func lightboxControllerWillDismiss(_ controller: LightboxController) {
+        
+        self.productTableView.reloadData()
+    }
+    func tapImg(_ sender:UITapGestureRecognizer){
+        let controller = LightboxController(images: imagelightbox)
+        
+        //  controller.dynamicBackground = true
+        
+        LightboxConfig.CloseButton.text = "اغلاق"
+        present(controller, animated: true, completion: nil)
     }
     func showUser(sender:UITapGestureRecognizer){
         let profileUser = self.storyboard?.instantiateViewController(withIdentifier: "profileView") as? profileViewController
@@ -150,9 +192,13 @@ get_product()
                     if success == true {
                         if let product_data = results["product"] as? [String:AnyObject] {
                             print(product_data)
+                            let newAddress = addressMapProduct(longtide: Double(product_data["longtide"] as? String ?? "0")! , latitude: Double(product_data["latitude"] as? String ?? "0")!, address: product_data["address"] as? String ?? "" , city: product_data["city"] as? String ?? "", productName:self.productData["name"] as? String ?? "", productID: self.productData["id"] as? String ?? "")
+                            print(newAddress)
+                            
+                            self.address.append(newAddress)
                             self.productData = product_data
                             self.imageData.removeAll()
-                            self.navigationItem.title = self.productData["name"] as? String ?? ""
+                            self.navigationItem.title = "تفاصيل الاعلان"
                             for str in (product_data["images"] as? NSArray)! {
                                 print(str)
                                 var each_list = [String:AnyObject]()
@@ -180,6 +226,9 @@ get_product()
             }
             
         }
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+       
     }
     /*
     // MARK: - Navigation

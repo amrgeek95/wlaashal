@@ -39,8 +39,19 @@ class menuViewController: SuperParentViewController ,UICollectionViewDelegate , 
         return cell!
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
+        staticNavigation = categories[indexPath.row]["name"] as? String ?? ""
+        if categories[indexPath.row]["segue"] as? String == "share"  {
+            let shareText = "حمل تطبيق ولا اسهل"
+            let urlshare = URL (string: "https://itunes.apple.com/app/id1395804763" as! String)
+            //check ipad
+            let activityViewController = UIActivityViewController(activityItems: [urlshare], applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.view
+            activityViewController.popoverPresentationController?.sourceRect = CGRect(x: self.view.layer.bounds.width * 0.3,y: self.view.layer.bounds.height * 0.5,width: 0.00, height: 0.0)
+            self.present(activityViewController, animated: true, completion: nil)
+            return
+        }
         if indexPath.row != categories.count - 1 {
+            
             if let seguee = categories[indexPath.row]["segue"] as? String {
                 
                 self.performSegue(withIdentifier: seguee, sender: nil)
@@ -48,12 +59,17 @@ class menuViewController: SuperParentViewController ,UICollectionViewDelegate , 
             }
         }else{
             if checkUserData() {
-                removeUserData()
-                removeData(name: "taxi")
-                removeData(name: "delivery")
-                let initialMain = self.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
-                self.present(initialMain!, animated: true, completion: nil)
+               
+                    removeUserData()
+                    removeData(name: "taxi")
+                    removeData(name: "delivery")
+                    let initialMain = self.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
+                    self.present(initialMain!, animated: true, completion: nil)
+                
             }
+            
+            
+          
             
         }
         
@@ -88,15 +104,15 @@ class menuViewController: SuperParentViewController ,UICollectionViewDelegate , 
 
             categories += [["name":"اضافة اعلان","image":"plus_sq","segue":"add_product"],["name":"الملف الشخصي","image":"user_c","segue":"profile"],
                            ["name":"الدردشة","image":"comment_co","segue":"user_chat"],["name":"الإعدادات","image":"setting_g","segue":"edit_profile"],
-                           ["name":"عن التطبيق","image":"Exclamatio","segue":"about"],["name":"تواصل معنا","image":"handset","segue":"showContact"],
-                           ["name":"الشروط والاحكام","image":"pen_color","segue":"condition"],["name":"مشاركة التطبيق","image":"share","segue":"share"],
+                           ["name":"عن التطبيق","image":"Exclamatio","segue":"showWebView"],["name":"تواصل معنا","image":"handset","segue":"showContact"],
+                           ["name":"الشروط والاحكام","image":"pen_color","segue":"showWebView"],["name":"مشاركة التطبيق","image":"share","segue":"share"],
                            ["name":"تسجيل الخروج","image":"turn_off","segue":"signout"]]
             
         }else{
             userLabel.text = ""
             
-            categories += [["name":"عن التطبيق","image":"Exclamatio","segue":"about"],["name":"تواصل معنا","image":"handset","segue":"showContact"],
-                           ["name":"الشروط والاحكام","image":"pen_color","segue":"condition"],["name":"مشاركة التطبيق","image":"share","segue":"share"]]
+            categories += [["name":"تسجيل الدخول","image":"plus_sq","segue":"showLogin"],["name":"عن التطبيق","image":"Exclamatio","segue":"showWebView"],["name":"تواصل معنا","image":"handset","segue":"showContact"],
+                           ["name":"الشروط والاحكام","image":"pen_color","segue":"showWebView"],["name":"مشاركة التطبيق","image":"share","segue":"share"]]
         }
         self.menuCollectionView.reloadData()
         
@@ -106,8 +122,12 @@ class menuViewController: SuperParentViewController ,UICollectionViewDelegate , 
         self.closeBtn.ButtonborderRoundradius(radius: 10)
         self.tabBarController?.tabBar.isHidden = true
         self.navigationItem.title = ""
-       
-        
+        self.navigationController?.navigationBar.plainView.semanticContentAttribute = .forceRightToLeft
+
+        if openChat == true {
+            openChat = false
+            self.performSegue(withIdentifier: "user_chat", sender: nil)
+        }
         self.navigationController?.navigationBar.isHidden = true
     }
     override func viewWillDisappear(_ animated: Bool) {

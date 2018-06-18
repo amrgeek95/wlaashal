@@ -37,6 +37,10 @@ class MapViewController: UIViewController , UITextFieldDelegate ,CLLocationManag
         
     }
     override func viewWillAppear(_ animated: Bool) {
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(appMovedToForeground), name: Notification.Name.UIApplicationWillEnterForeground, object: nil)
+        self.navigationController?.navigationBar.plainView.semanticContentAttribute = .forceRightToLeft
+
         mapView.delegate = self
         
         self.searchText.delegate = self
@@ -49,19 +53,51 @@ class MapViewController: UIViewController , UITextFieldDelegate ,CLLocationManag
         self.locationManager.requestWhenInUseAuthorization()
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
             addressFrom.longtide = (locationManager.location?.coordinate.longitude)!
             addressFrom.latitude = (locationManager.location?.coordinate.latitude)!
-            let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 6.0)
+            let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 15.0)
             mapView.camera = camera
             
+            marker.position = CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!)
+            marker.title = "مكان التحرك"
+            
+            marker.snippet = ""
+            
+            marker.icon = GMSMarker.markerImage(with: UIColor.green)
+            marker.map = mapView
             showMarker(position: camera.target)
         }else{
-            let camera = GMSCameraPosition.camera(withLatitude: 37.36, longitude: -122.0, zoom: 6.0)
+            let alertController = UIAlertController(title: NSLocalizedString("تنبية", comment: ""), message: NSLocalizedString("يجب السماح بتحديد المكان", comment: ""), preferredStyle: .alert)
+            
+            let cancelAction = UIAlertAction(title: NSLocalizedString("الغاء", comment: ""), style: .cancel, handler: nil)
+            let settingsAction = UIAlertAction(title: NSLocalizedString("الاعدادات", comment: ""), style: .default) { (UIAlertAction) in
+                UIApplication.shared.openURL(NSURL(string: UIApplicationOpenSettingsURLString)! as URL)
+            }
+            
+            
+            alertController.addAction(cancelAction)
+            alertController.addAction(settingsAction)
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+    func appMovedToForeground() {
+        
+        self.locationManager.requestAlwaysAuthorization()
+        
+        // For use in foreground
+        self.locationManager.requestWhenInUseAuthorization()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            
+            let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 15.0)
             mapView.camera = camera
             
-            showMarker(position: camera.target)
+            
         }
+        print("App moved to ForeGround!")
     }
     @IBOutlet weak var searchText: UITextField!
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -249,11 +285,11 @@ extension MapViewController: GMSMapViewDelegate {
         view.layer.cornerRadius = 6
         
         let lbl1 = UILabel(frame: CGRect.init(x: 8, y: 8, width: view.frame.size.width - 16, height: 15))
-        lbl1.text = "Hi there!"
+        lbl1.text = "مكان التحرك"
         view.addSubview(lbl1)
         
         let lbl2 = UILabel(frame: CGRect.init(x: lbl1.frame.origin.x, y: lbl1.frame.origin.y + lbl1.frame.size.height + 3, width: view.frame.size.width - 16, height: 15))
-        lbl2.text = "I am a custom info window."
+        lbl2.text = ""
         lbl2.font = UIFont.systemFont(ofSize: 14)
         view.addSubview(lbl2)
         return view
@@ -272,6 +308,16 @@ extension MapViewController: GMSMapViewDelegate {
     }
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D){
         marker.position = coordinate
+        let camera = GMSCameraPosition.camera(withLatitude: coordinate.latitude, longitude: coordinate.longitude, zoom: 15.0)
+        
+        marker.position = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        marker.title = "مكان التحرك"
+        
+        marker.snippet = ""
+        
+        marker.icon = GMSMarker.markerImage(with: UIColor.green)
+        marker.map = mapView
+        showMarker(position: camera.target)
     }
     
 }

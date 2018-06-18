@@ -1,38 +1,46 @@
 //
-//  taxiRegisterTableViewCell.swift
+//  editProductTableViewCell.swift
 //  wla ashal
 //
-//  Created by amr sobhy on 5/27/18.
+//  Created by amr sobhy on 5/26/18.
 //  Copyright © 2018 amr sobhy. All rights reserved.
 //
 
 import UIKit
-
 import Alamofire
 import MBProgressHUD
 import ImagePicker
 import Lightbox
-class taxiRegisterTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePickerDelegate{
-    var parent : taxiRegisterViewController!
+import DropDown
+class editProductTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePickerDelegate ,ProtocolToSendData , UITextFieldDelegate{
+    func setResultOfBusinessLogic(valueSent: addressMap) {
+        self.addressText.text = valueSent.address
+    }
+    
+    var mainCategory = DropDown()
+    var subCategory = DropDown()
+    var sub_id = ""
+    var category_id = ""
     var imageArray = [String]()
     @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var titleText : UITextField!
+    @IBOutlet weak var titleText: UITextField!
+    var parent : editProductViewController!
     @IBOutlet weak var imageCollectionView: UICollectionView!
+    @IBOutlet weak var mainBtn: UIButton!
     @IBOutlet weak var imageLabel: UILabel!
-    
-    @IBOutlet weak var subTitle: UITextField!
-    
-    @IBOutlet weak var secondTitle: UITextField!
+    @IBOutlet weak var submitBtn: UIButton!
     
     @IBOutlet weak var saveBtn: UIButton!
-    
+    @IBOutlet weak var subBtn: UIButton!
     @IBOutlet weak var bodyTextView: UITextView!
+    @IBOutlet weak var addressText: UITextField!
+    
+    @IBOutlet weak var locationBtn: UIButton!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
-       
-        self.secondTitle.keyboardType = .asciiCapableNumberPad
-        self.bodyTextView.text = "اكتب محتوي الاعلان"
+        self.addressText.setTextIconLeft(image: "map_co")
+     //   self.bodyTextView.text = "اكتب محتوي الاعلان"
         self.bodyTextView.textColor = UIColor.lightGray
         self.bodyTextView.delegate = self
         self.bodyTextView.textAlignment = .right
@@ -42,18 +50,35 @@ class taxiRegisterTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePicke
         bodyTextView.layer.cornerRadius = 5
         bodyTextView.isSelectable = true
         bodyTextView.isEditable = true
+        self.locationBtn.isHidden = true
+        //  self.addressText.
+        
+        
+        
+        // Initialization code
     }
-
+    
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
+    @IBAction func locationAction(_ sender: Any) {
+    }
+    @IBAction func subAction(_ sender: Any) {
+        subCategory.show()
+    }
+    @IBAction func categoryAction(_ sender: Any) {
+        mainCategory.show()
+    }
+    
     @IBOutlet weak var imageBtn: UIButton!
     @IBAction func imageAction(_ sender: Any) {
         let imagePickerController = ImagePickerController()
         imagePickerController.delegate = self
         imagePickerController.imageLimit = 6
+        
         imagePickerController.modalPresentationStyle = .overCurrentContext
         self.parent.present(imagePickerController, animated: true, completion: nil)
     }
@@ -89,10 +114,8 @@ class taxiRegisterTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePicke
                     MBProgressHUD.hide(for: self.parent.view, animated: true)
                     if let results = response.result.value as? [String:AnyObject]{
                         if let result_image = results["images"] as? [String] {
-                            for image_key in result_image {
-                                self.imageArray.append(image_key)
-                            }
-                            self.parent.image = self.imageArray
+                            self.imageArray = result_image
+                            self.parent.image = result_image
                             self.imageCollectionView.reloadData()
                             
                         }else{
@@ -118,40 +141,63 @@ class taxiRegisterTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePicke
     }
     @IBAction func submitAction(_ sender: Any) {
         var parameters = [String:AnyObject]()
-        self.saveBtn.isEnabled = false
-        guard inputValidation(text: self.titleText.text!, message: "يجب كتابة العنوان ", view: self.parent.view) else{
-            self.saveBtn.isEnabled = true
+        
+        guard inputValidation(text: self.titleText.text!, message: "يجب كتابة عنوان للأعلان", view: self.parent.view) else{
+            
             return
         }
         let title = self.titleText.text!
         print("titlLEngth\(title.length)")
         if title.length > 30 {
-            wla_ashal.toastView(messsage: "العنوان  طويل جدا", view: self.parent.view)
-            self.saveBtn.isEnabled = true
+            wla_ashal.toastView(messsage: "عنوان الاعلان طويل جدا", view: self.parent.view)
             return
         }
-        if bodyTextView.textColor == UIColor.lightGray {
-            wla_ashal.toastView(messsage: "يجب كتابة المحتوي ", view: self.parent.view)
-            self.saveBtn.isEnabled = true
+        guard inputValidation(text: self.titleText.text!, message: "يجب كتابة عنوان للأعلان", view: self.parent.view) else{
+            
             return
         }
-        guard inputValidation(text: bodyTextView.text!, message: "يجب كتابة المحتوي ", view: self.parent.view) else{
-            self.saveBtn.isEnabled = true
+        if title.length > 30 {
+            wla_ashal.toastView(messsage: "عنوان الاعلان طويل جدا", view: self.parent.view)
+            return
+        }
+        if (addressText.text?.isEmpty)!{
+            wla_ashal.toastView(messsage: "يجب كتابة عنوان المستخدم", view: self.parent.view)
+            return
+        }
+        guard inputValidation(text: bodyTextView.text!, message: "يجب كتابة محتوي الاعلان", view: self.parent.view) else{
             return
         }
         guard !imageArray.isEmpty else {
-            wla_ashal.toastView(messsage: "يجب رفع صورة واحدة علي الاقل", view: self.parent.view)
-            self.saveBtn.isEnabled = true
+            AlertFun.ShowAlert(title: "تنبية", message: "يجب رفع صورة واحدة علي الاقل", in: self.parent)
+            // wla_ashal.toastView(messsage: "يجب رفع صورة واحدة علي الاقل", view: self.parent.view)
             return
         }
         
+        
         parameters["name"] = titleText.text as AnyObject
         parameters["user_id"] = userData["id"] as AnyObject
-        parameters["car_number"] = subTitle.text as AnyObject
-        parameters["mobile"] = secondTitle.text as AnyObject
+         parameters["id"] = self.parent.product_id as AnyObject
+        parameters["category_id"] = category_id as AnyObject
+        if !parent.myLocation.longtide.isZero {
+            parameters["longtide"] = parent.myLocation.longtide as AnyObject
+            parameters["latitude"] = parent.myLocation.latitude as AnyObject
+            parameters["city"] = parent.myLocation.city as AnyObject
+            parameters["address"] = parent.myLocation.address as AnyObject
+        }
+       
+        parameters["category_id"] = category_id as AnyObject
+        
+        if sub_id == "" {
+            
+            sub_id  = subCategory.selectedItem as? String ?? ""
+        }
+        parameters["subcategory_id"] = sub_id as AnyObject
         parameters["body"] = bodyTextView.text as AnyObject
-        parameters["images"] = imageArray as AnyObject
-        var url = base_url + "taxi_register"
+        if !imageArray.isEmpty{
+            parameters["images"] = imageArray as AnyObject
+            
+        }
+        var url = base_url + "edit_product"
         print(parameters)
         
         MBProgressHUD.showAdded(to: self.parent.view, animated: true)
@@ -159,25 +205,18 @@ class taxiRegisterTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePicke
         Alamofire.request(url, method: .get, parameters: parameters).responseJSON{
             (response) in
             print(response)
-            self.saveBtn.isEnabled = true
+            self.submitBtn.isEnabled = false
             MBProgressHUD.hide(for: self.parent.view,animated:true)
             if let results = response.result.value as? [String:AnyObject]{
                 print(results)
-            
-                if results["status"] as? Bool == true {
-                    
-                    let alert = UIAlertController(title: "تم تسجيل الطلب", message: "", preferredStyle: UIAlertControllerStyle.alert)
-                    alert.addAction(UIAlertAction(title: "حسنا", style: UIAlertActionStyle.default, handler:{ (alert: UIAlertAction!) -> Void in
-                        let initialMain = self.parent.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
-                        initialMain?.selectedIndex = 1
-                        saveData(name: "taxi")
-                        isTaxi = true
-                        self.parent.present(initialMain!, animated: true, completion: nil)
-                    }
-                    ))
-                    self.parent.present(alert, animated: true, completion: nil)
-                }
                 
+                if results["status"] as? Bool == true {
+                    self.parent.view.makeToast("تم اضافة الاعلان")
+                    let initialMain = self.parent.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
+                    initialMain?.selectedIndex = 1
+                    
+                    self.parent.present(initialMain!, animated: true, completion: nil)
+                }
             }
         }
         
@@ -198,5 +237,6 @@ class taxiRegisterTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePicke
         }
         
     }
-
+    
 }
+

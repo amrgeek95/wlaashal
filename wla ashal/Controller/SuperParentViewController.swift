@@ -25,7 +25,8 @@ class SuperParentViewController: UIViewController ,UNUserNotificationCenterDeleg
         UINavigationBar.appearance().layer.shadowOpacity = 1
         UINavigationBar.appearance().layer.shadowOffset = CGSize(width: 0, height: 2.0)
         UINavigationBar.appearance().layer.shadowRadius = 10
-
+        UINavigationBar.appearance().plainView.semanticContentAttribute = .forceRightToLeft
+ self.navigationController?.navigationBar.plainView.semanticContentAttribute = .forceRightToLeft
         if Reachability.isConnectedToNetwork(){
             
         }else{
@@ -38,7 +39,7 @@ class SuperParentViewController: UIViewController ,UNUserNotificationCenterDeleg
         UILabel.appearance().substituteFontName = "DroidArabicKufi"; // USE YOUR FONT NAME INSTEAD
         UITextView.appearance().substituteFontName = "DroidArabicKufi"; // USE YOUR FONT NAME INSTEAD
         UITextField.appearance().substituteFontName = "DroidArabicKufi";
-        
+         self.navigationController?.navigationBar.plainView.semanticContentAttribute = .forceRightToLeft
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

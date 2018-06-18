@@ -7,9 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F0853A720CE1FB300431213 /* webViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0853A620CE1FB300431213 /* webViewController.swift */; };
+		2F0853AA20CE264700431213 /* resetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0853A820CE264600431213 /* resetPasswordViewController.swift */; };
+		2F0853AB20CE264700431213 /* verificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0853A920CE264700431213 /* verificationViewController.swift */; };
 		2F1400B120B9038200D0D73A /* addProductTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1400B020B9038200D0D73A /* addProductTableViewCell.swift */; };
 		2F1400B320B9039700D0D73A /* addProductTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1400B220B9039700D0D73A /* addProductTableViewController.swift */; };
 		2F1400B520B905B000D0D73A /* addImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1400B420B905B000D0D73A /* addImageCollectionViewCell.swift */; };
+		2F15D78A20CD538E00575AB4 /* editProductViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F15D78920CD538E00575AB4 /* editProductViewController.swift */; };
+		2F15D78C20CD545C00575AB4 /* editProductTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F15D78B20CD545C00575AB4 /* editProductTableViewCell.swift */; };
 		2F18C76220C1EEBD0082BC1D /* chatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F18C75F20C1EEBC0082BC1D /* chatViewController.swift */; };
 		2F18C76320C1EEBD0082BC1D /* usersChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F18C76020C1EEBD0082BC1D /* usersChatViewController.swift */; };
 		2F18C76420C1EEBD0082BC1D /* parentChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F18C76120C1EEBD0082BC1D /* parentChatViewController.swift */; };
@@ -72,10 +77,14 @@
 		2FBEC48420BA4E0E00EA5275 /* requestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FBEC48320BA4E0E00EA5275 /* requestViewController.swift */; };
 		2FBEC48620BA4F4700EA5275 /* requestBottomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FBEC48520BA4F4700EA5275 /* requestBottomTableViewCell.swift */; };
 		2FC7A19920C0F3370067D46B /* contactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC7A19820C0F3370067D46B /* contactViewController.swift */; };
+		2FE21CDE20CA76FB00192A3E /* PopUpDatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE21CDB20CA76FA00192A3E /* PopUpDatePickerView.swift */; };
+		2FE21CDF20CA76FB00192A3E /* PopUpPickerViewBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE21CDC20CA76FA00192A3E /* PopUpPickerViewBase.swift */; };
+		2FE21CE020CA76FB00192A3E /* PopUpPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE21CDD20CA76FA00192A3E /* PopUpPickerView.swift */; };
 		2FE9590C20C73CE30030EF1C /* mapListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE9590B20C73CE30030EF1C /* mapListViewController.swift */; };
 		2FF44A7E20C4A20600A6E0F0 /* notificationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF44A7D20C4A20600A6E0F0 /* notificationTableViewCell.swift */; };
 		2FF44A8020C4A25400A6E0F0 /* notificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF44A7F20C4A25400A6E0F0 /* notificationViewController.swift */; };
 		2FF44A8220C4F19800A6E0F0 /* pickPlaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF44A8120C4F19800A6E0F0 /* pickPlaceViewController.swift */; };
+		2FF823E620D52C310085C38B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2FF823E520D52C300085C38B /* GoogleService-Info.plist */; };
 		4B9DE388649AE023164CF178 /* Pods_wla_ashalUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2C8FA6D9A8020CA3337EAE5 /* Pods_wla_ashalUITests.framework */; };
 		6B8314360C5B79D682C925EE /* Pods_wla_ashalTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25CEEE5B03204492AC58B77F /* Pods_wla_ashalTests.framework */; };
 		D955F6EBD1B2EB2BF69F8CB6 /* Pods_wla_ashal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA3404124089DEA71D37F0FD /* Pods_wla_ashal.framework */; };
@@ -101,9 +110,14 @@
 /* Begin PBXFileReference section */
 		0CFD2C9C24E47697C092D1A5 /* Pods-wla ashalUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wla ashalUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-wla ashalUITests/Pods-wla ashalUITests.release.xcconfig"; sourceTree = "<group>"; };
 		25CEEE5B03204492AC58B77F /* Pods_wla_ashalTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_wla_ashalTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F0853A620CE1FB300431213 /* webViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = webViewController.swift; sourceTree = "<group>"; };
+		2F0853A820CE264600431213 /* resetPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = resetPasswordViewController.swift; sourceTree = "<group>"; };
+		2F0853A920CE264700431213 /* verificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = verificationViewController.swift; sourceTree = "<group>"; };
 		2F1400B020B9038200D0D73A /* addProductTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addProductTableViewCell.swift; sourceTree = "<group>"; };
 		2F1400B220B9039700D0D73A /* addProductTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addProductTableViewController.swift; sourceTree = "<group>"; };
 		2F1400B420B905B000D0D73A /* addImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addImageCollectionViewCell.swift; sourceTree = "<group>"; };
+		2F15D78920CD538E00575AB4 /* editProductViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = editProductViewController.swift; sourceTree = "<group>"; };
+		2F15D78B20CD545C00575AB4 /* editProductTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = editProductTableViewCell.swift; sourceTree = "<group>"; };
 		2F18C75F20C1EEBC0082BC1D /* chatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = chatViewController.swift; sourceTree = "<group>"; };
 		2F18C76020C1EEBD0082BC1D /* usersChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = usersChatViewController.swift; sourceTree = "<group>"; };
 		2F18C76120C1EEBD0082BC1D /* parentChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = parentChatViewController.swift; sourceTree = "<group>"; };
@@ -173,10 +187,15 @@
 		2FBEC48320BA4E0E00EA5275 /* requestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = requestViewController.swift; sourceTree = "<group>"; };
 		2FBEC48520BA4F4700EA5275 /* requestBottomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = requestBottomTableViewCell.swift; sourceTree = "<group>"; };
 		2FC7A19820C0F3370067D46B /* contactViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = contactViewController.swift; sourceTree = "<group>"; };
+		2FE21CDA20CA5F9B00192A3E /* wla ashal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "wla ashal.entitlements"; sourceTree = "<group>"; };
+		2FE21CDB20CA76FA00192A3E /* PopUpDatePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUpDatePickerView.swift; sourceTree = "<group>"; };
+		2FE21CDC20CA76FA00192A3E /* PopUpPickerViewBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUpPickerViewBase.swift; sourceTree = "<group>"; };
+		2FE21CDD20CA76FA00192A3E /* PopUpPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUpPickerView.swift; sourceTree = "<group>"; };
 		2FE9590B20C73CE30030EF1C /* mapListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mapListViewController.swift; sourceTree = "<group>"; };
 		2FF44A7D20C4A20600A6E0F0 /* notificationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notificationTableViewCell.swift; sourceTree = "<group>"; };
 		2FF44A7F20C4A25400A6E0F0 /* notificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notificationViewController.swift; sourceTree = "<group>"; };
 		2FF44A8120C4F19800A6E0F0 /* pickPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pickPlaceViewController.swift; sourceTree = "<group>"; };
+		2FF823E520D52C300085C38B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		45C95FDB476E38938B5CCDF7 /* Pods-wla ashalTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wla ashalTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-wla ashalTests/Pods-wla ashalTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7C76AE9F31B99E11E6CC3B4D /* Pods-wla ashal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wla ashal.release.xcconfig"; path = "Pods/Target Support Files/Pods-wla ashal/Pods-wla ashal.release.xcconfig"; sourceTree = "<group>"; };
 		862AA9DE0E51BA769153E7F6 /* Pods-wla ashal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wla ashal.debug.xcconfig"; path = "Pods/Target Support Files/Pods-wla ashal/Pods-wla ashal.debug.xcconfig"; sourceTree = "<group>"; };
@@ -216,6 +235,8 @@
 		2F2FD74420B4DFF60085E978 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				2F0853A820CE264600431213 /* resetPasswordViewController.swift */,
+				2F0853A920CE264700431213 /* verificationViewController.swift */,
 				2F1400B220B9039700D0D73A /* addProductTableViewController.swift */,
 				2F18C75F20C1EEBC0082BC1D /* chatViewController.swift */,
 				2FC7A19820C0F3370067D46B /* contactViewController.swift */,
@@ -245,6 +266,8 @@
 				2F18C76020C1EEBD0082BC1D /* usersChatViewController.swift */,
 				2FE9590B20C73CE30030EF1C /* mapListViewController.swift */,
 				2FB29CFD20C8416600149619 /* addReviewViewController.swift */,
+				2F15D78920CD538E00575AB4 /* editProductViewController.swift */,
+				2F0853A620CE1FB300431213 /* webViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -273,6 +296,7 @@
 				2F18C76B20C201420082BC1D /* editProfileTableViewCell.swift */,
 				2F9D26C620C357AD00972AA0 /* actionRequestTableViewCell.swift */,
 				2FF44A7D20C4A20600A6E0F0 /* notificationTableViewCell.swift */,
+				2F15D78B20CD545C00575AB4 /* editProductTableViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -293,6 +317,9 @@
 		2F631FFD20BB4CD700A449A5 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				2FE21CDB20CA76FA00192A3E /* PopUpDatePickerView.swift */,
+				2FE21CDD20CA76FA00192A3E /* PopUpPickerView.swift */,
+				2FE21CDC20CA76FA00192A3E /* PopUpPickerViewBase.swift */,
 				2F63200320BB4D2E00A449A5 /* GlobalVariables.swift */,
 				2F63200020BB4D2E00A449A5 /* Reachiblity.swift */,
 				2F63200120BB4D2E00A449A5 /* Source */,
@@ -334,6 +361,7 @@
 		2F8CAFDA20B3B794001DC210 /* wla ashal */ = {
 			isa = PBXGroup;
 			children = (
+				2FE21CDA20CA5F9B00192A3E /* wla ashal.entitlements */,
 				2F631FFE20BB4CDE00A449A5 /* Model */,
 				2F631FFD20BB4CD700A449A5 /* Helper */,
 				2F631FFC20BB4CCF00A449A5 /* Fonts */,
@@ -343,6 +371,7 @@
 				2F8CAFDD20B3B794001DC210 /* ViewController.swift */,
 				2F8CAFDF20B3B794001DC210 /* Main.storyboard */,
 				2F8CAFE520B3B794001DC210 /* Assets.xcassets */,
+				2FF823E520D52C300085C38B /* GoogleService-Info.plist */,
 				2F8CAFE720B3B794001DC210 /* LaunchScreen.storyboard */,
 				2F8CAFEA20B3B794001DC210 /* Info.plist */,
 				2F8CAFE220B3B794001DC210 /* wla_ashal.xcdatamodeld */,
@@ -465,6 +494,14 @@
 					2F8CAFD720B3B794001DC210 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					2F8CAFEE20B3B794001DC210 = {
 						CreatedOnToolsVersion = 9.2;
@@ -509,6 +546,7 @@
 				2F63201120BB4D3E00A449A5 /* ArbFONTS-Droid-Arabic-Kufi.ttf in Resources */,
 				2F8CAFE620B3B794001DC210 /* Assets.xcassets in Resources */,
 				2F63201520BB4D3E00A449A5 /* ArbFONTS-Droid.Arabic.Kufi_.Bold_DownloadSoftware.iR_.ttf in Resources */,
+				2FF823E620D52C310085C38B /* GoogleService-Info.plist in Resources */,
 				2F63201220BB4D3E00A449A5 /* ArbFONTS-Droid Arabic Kufi Bold.ttf in Resources */,
 				2F8CAFE120B3B794001DC210 /* Main.storyboard in Resources */,
 				2F63201620BB4D3E00A449A5 /* ArbFONTS-Droid.Arabic.Kufi_DownloadSoftware.iR_.ttf in Resources */,
@@ -673,20 +711,25 @@
 				2FF44A7E20C4A20600A6E0F0 /* notificationTableViewCell.swift in Sources */,
 				2F18C76E20C213A70082BC1D /* modalViewController.swift in Sources */,
 				2F2FD74D20B4E0080085E978 /* LoginViewController.swift in Sources */,
+				2F15D78C20CD545C00575AB4 /* editProductTableViewCell.swift in Sources */,
 				2F2FD75020B4E06A0085E978 /* homeViewController.swift in Sources */,
 				2F18C76420C1EEBD0082BC1D /* parentChatViewController.swift in Sources */,
 				2FBEC48420BA4E0E00EA5275 /* requestViewController.swift in Sources */,
 				2F63200A20BB4D3500A449A5 /* Global.swift in Sources */,
 				2F2FD76120B4E4CC0085E978 /* listProductCollectionViewCell.swift in Sources */,
+				2F0853AB20CE264700431213 /* verificationViewController.swift in Sources */,
 				2F18C77220C239440082BC1D /* secondMapViewController.swift in Sources */,
 				2F2FD75B20B4E3320085E978 /* productDetailTableViewCell.swift in Sources */,
 				2F2FD75520B4E0CD0085E978 /* listProductsViewController.swift in Sources */,
 				2FBEC46E20BA134500EA5275 /* signUpTableViewCell.swift in Sources */,
 				2F2FD74C20B4E0080085E978 /* SignUpViewController.swift in Sources */,
+				2F0853A720CE1FB300431213 /* webViewController.swift in Sources */,
 				2F18C76C20C201420082BC1D /* editProfileTableViewCell.swift in Sources */,
 				2FBEC47C20BA32CC00EA5275 /* deliveryRegisterViewController.swift in Sources */,
 				2F2FD75320B4E0AC0085E978 /* homeCollectionViewCell.swift in Sources */,
 				2FBEC48020BA4DEA00EA5275 /* requestHeaderTableViewCell.swift in Sources */,
+				2F0853AA20CE264700431213 /* resetPasswordViewController.swift in Sources */,
+				2F15D78A20CD538E00575AB4 /* editProductViewController.swift in Sources */,
 				2F18C76220C1EEBD0082BC1D /* chatViewController.swift in Sources */,
 				2F2FD74E20B4E0080085E978 /* splashScreenViewController.swift in Sources */,
 				2F18C76620C1EEC50082BC1D /* usersChatTableViewCell.swift in Sources */,
@@ -711,6 +754,7 @@
 				2F63200520BB4D2E00A449A5 /* Reachiblity.swift in Sources */,
 				2F18C77020C238FC0082BC1D /* MapViewController.swift in Sources */,
 				2FBD791420BF465200411D03 /* sliderTableViewCell.swift in Sources */,
+				2FE21CE020CA76FB00192A3E /* PopUpPickerView.swift in Sources */,
 				2FF44A8020C4A25400A6E0F0 /* notificationViewController.swift in Sources */,
 				2FBEC48620BA4F4700EA5275 /* requestBottomTableViewCell.swift in Sources */,
 				2FBEC47220BA2E2600EA5275 /* profileImageTableViewCell.swift in Sources */,
@@ -720,6 +764,7 @@
 				2FBD791620BF4A8700411D03 /* mainViewController.swift in Sources */,
 				2FBD791220BF3ED400411D03 /* menuViewController.swift in Sources */,
 				2F2FD75D20B4E33C0085E978 /* productBottomTableViewCell.swift in Sources */,
+				2FE21CDF20CA76FB00192A3E /* PopUpPickerViewBase.swift in Sources */,
 				2F2FD74A20B4E0080085E978 /* SuperParentViewController.swift in Sources */,
 				2F9D26C720C357AD00972AA0 /* actionRequestTableViewCell.swift in Sources */,
 				2F18C76320C1EEBD0082BC1D /* usersChatViewController.swift in Sources */,
@@ -727,6 +772,7 @@
 				2F18C77420C24C690082BC1D /* taxiPriceViewController.swift in Sources */,
 				2F63200420BB4D2E00A449A5 /* Utitlites.swift in Sources */,
 				2FBEC47820BA329B00EA5275 /* taxiRegisterViewController.swift in Sources */,
+				2FE21CDE20CA76FB00192A3E /* PopUpDatePickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -893,6 +939,7 @@
 			baseConfigurationReference = 862AA9DE0E51BA769153E7F6 /* Pods-wla ashal.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "wla ashal/wla ashal.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S32NA7S358;
 				INFOPLIST_FILE = "wla ashal/Info.plist";
@@ -910,6 +957,7 @@
 			baseConfigurationReference = 7C76AE9F31B99E11E6CC3B4D /* Pods-wla ashal.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "wla ashal/wla ashal.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S32NA7S358;
 				INFOPLIST_FILE = "wla ashal/Info.plist";

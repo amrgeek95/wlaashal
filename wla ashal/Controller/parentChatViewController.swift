@@ -26,11 +26,9 @@ class parentChatViewController: SuperParentViewController {
          self.navigationController?.navigationBar.plainView.semanticContentAttribute = .forceRightToLeft
          self.navigationController?.navigationBar.tintColor = UIColor.white
         
+        
     }
    
-    override func viewWillDisappear(_ animated: Bool) {
-         self.navigationController?.navigationBar.plainView.semanticContentAttribute = .forceLeftToRight
-    }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "embedChat" ,
             let nextScene = segue.destination as? chatViewController  {

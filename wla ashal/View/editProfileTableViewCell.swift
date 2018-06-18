@@ -44,7 +44,8 @@ class editProfileTableViewCell: UITableViewCell  ,  ImagePickerDelegate {
     func tapImage(_ sender:UITapGestureRecognizer) {
         let imagePickerController = ImagePickerController()
         imagePickerController.delegate = self
-        imagePickerController.imageLimit = 6
+        imagePickerController.imageLimit = 1
+        imagePickerController.modalPresentationStyle = .overCurrentContext
         self.parent.present(imagePickerController, animated: true, completion: nil)
     }
     func wrapperDidPress(_ imagePicker: ImagePickerController, images: [UIImage]){
@@ -97,6 +98,8 @@ class editProfileTableViewCell: UITableViewCell  ,  ImagePickerDelegate {
         imagePicker.dismiss(animated: true, completion: nil)
     }
     func cancelButtonDidPress(_ imagePicker: ImagePickerController){
+        imagePicker.view!.removeFromSuperview()
+        imagePicker.removeFromParentViewController()
         
     }
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -130,10 +133,16 @@ class editProfileTableViewCell: UITableViewCell  ,  ImagePickerDelegate {
             
             parameters["token"] = token
             parameters["name"] = name
-            parameters["ثةشهم"] = mobile
-            parameters["username"] = emailText.text
-            parameters["password"] = passwordText.text
-            parameters["image"] = imageString
+            parameters["mobile"] = mobile
+            parameters["email"] = emailText.text
+             parameters["id"] = userData["id"]
+            if !(uPassword?.isEmpty)! {
+                parameters["password"] = passwordText.text
+            }
+            if !imageString.isEmpty {
+                parameters["image"] = imageString
+                
+            }
             print(parameters)
             let register_url = base_url + "edit"
             print(register_url)
@@ -145,15 +154,17 @@ class editProfileTableViewCell: UITableViewCell  ,  ImagePickerDelegate {
                 if  let results = response.result.value as? [String:AnyObject] {
                     print(results["message"])
                     if results["status"] as? Bool == true {
-                        if let user_data = results["user"] as? [String:AnyObject] {
-                            print(userData)
-                            saveUserData(userData: user_data as [String:AnyObject])
-                            userData = user_data
-                            //  application.registerForRemoteNotifications()
-                            //  self.setNotification()
-                            let initialMain = self.parent.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
-                            self.parent.present(initialMain!, animated: true, completion: nil)
+                        userData["username"] = self.emailText.text
+                         userData["mobile"] = mobile
+                         userData["name"] = name
+                        if !self.imageString.isEmpty {
+                            userData["image"] = self.imageString
                         }
+                        saveUserData(userData: userData as [String : AnyObject])
+                        wla_ashal.toastView(messsage: "تم تعديل البيانات", view: self.parent.view)
+                        let initialMain = self.parent.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
+                        self.parent.present(initialMain!, animated: true, completion: nil)
+                        
                     }else{
                         wla_ashal.toastView(messsage:results["message"] as? String ?? "", view: self.parent.view)
                     }
@@ -195,8 +206,21 @@ class editProfileTableViewCell: UITableViewCell  ,  ImagePickerDelegate {
         
         
         if password.isEmpty{
-            wla_ashal.toastView(messsage:"يجب ادخال كلمة المرور", view: self.parent.view)
-            return false
+            print(password)
+            print(repassword.text)
+            
+            if !(repassword.text?.isEmpty)!{
+                wla_ashal.toastView(messsage:"يجب ادخال كلمة المرور", view: self.parent.view)
+                 return false
+            }
+           
+        }else{
+            
+            if password != repassword.text {
+                wla_ashal.toastView(messsage:"لابد من تطابق كلمة المرور", view: self.parent.view)
+                return false
+                
+            }
         }
         
         return true

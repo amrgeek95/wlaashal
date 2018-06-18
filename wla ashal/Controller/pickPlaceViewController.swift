@@ -53,27 +53,53 @@ class pickPlaceViewController: UIViewController , UITextFieldDelegate ,CLLocatio
         
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
             addressFrom.longtide = (locationManager.location?.coordinate.longitude)!
             addressFrom.latitude = (locationManager.location?.coordinate.latitude)!
-            let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 6.0)
+            let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 17.0)
             mapView.camera = camera
             
             showMarker(position: camera.target)
         }else{
-            let camera = GMSCameraPosition.camera(withLatitude: 37.36, longitude: -122.0, zoom: 6.0)
-            mapView.camera = camera
+            let alertController = UIAlertController(title: NSLocalizedString("تنبية", comment: ""), message: NSLocalizedString("يجب السماح بتحديد المكان", comment: ""), preferredStyle: .alert)
             
-            showMarker(position: camera.target)
+            let cancelAction = UIAlertAction(title: NSLocalizedString("الغاء", comment: ""), style: .cancel, handler: nil)
+            let settingsAction = UIAlertAction(title: NSLocalizedString("الاعدادات", comment: ""), style: .default) { (UIAlertAction) in
+                UIApplication.shared.openURL(NSURL(string: UIApplicationOpenSettingsURLString)! as URL)
+            }
+            
+            
+            alertController.addAction(cancelAction)
+            alertController.addAction(settingsAction)
+            self.present(alertController, animated: true, completion: nil)
         }
         
 
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(appMovedToForeground), name: Notification.Name.UIApplicationWillEnterForeground, object: nil)
     }
     
+    func appMovedToForeground() {
+        
+        self.locationManager.requestAlwaysAuthorization()
+        
+        // For use in foreground
+        self.locationManager.requestWhenInUseAuthorization()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            
+            let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 15.0)
+            mapView.camera = camera
+            
+            
+        }
+        print("App moved to ForeGround!")
+    }
     @IBOutlet weak var searchText: UITextField!
     func textFieldDidBeginEditing(_ textField: UITextField) {
         let acController = GMSAutocompleteViewController()
@@ -116,8 +142,8 @@ class pickPlaceViewController: UIViewController , UITextFieldDelegate ,CLLocatio
             print(self.longtude)
             print(self.latitude)
             
-            self.addressFrom.latitude = self.latitude
-            self.addressFrom.longtide = self.longtude
+            self.addressFrom.latitude = address.coordinate.latitude
+            self.addressFrom.longtide = address.coordinate.longitude
             
             self.addressFrom.city = address.administrativeArea as? String ?? ""
             self.addressFrom.address =  lines.joined(separator: " , ")
@@ -214,8 +240,8 @@ extension pickPlaceViewController {
             }
             print("exact location")
             print(lines.joined(separator: "\n"))
-            self.addressFrom.latitude = self.latitude
-            self.addressFrom.longtide = self.longtude
+            self.addressFrom.latitude = address.coordinate.latitude
+            self.addressFrom.longtide = address.coordinate.longitude
             
             self.addressFrom.city = address.administrativeArea as? String ?? ""
             self.addressFrom.address =  lines.joined(separator: " , ")
@@ -281,6 +307,49 @@ extension pickPlaceViewController: GMSMapViewDelegate {
     }
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D){
         marker.position = coordinate
+        let geocoder = GMSGeocoder()
+        
+        // 2
+        geocoder.reverseGeocodeCoordinate(coordinate) { response, error in
+        
+            
+            guard let address = response?.firstResult(), let lines = address.lines else {
+                return
+            }
+            print("addressaa\(address)")
+            print("lines\(lines)")
+            
+            print("lineslat\(address.coordinate.latitude)")
+            print("lineslong\(address.coordinate.longitude)")
+            
+            self.marker.snippet = lines.joined(separator: "\n")
+            print("ely hytb3t \(self.addressFrom)")
+            
+            self.addressFrom.longtide = address.coordinate.longitude as? Double ?? 0.0
+            self.addressFrom.latitude = address.coordinate.latitude as? Double ?? 0.0
+            self.addressFrom.city = address.administrativeArea as? String ?? ""
+            self.addressFrom.address =  lines.joined(separator: " , ")
+            print(self.addressFrom)
+            // 3
+            //  self.addressLabel.text = lines.joined(separator: "\n")
+            
+            // 4
+            UIView.animate(withDuration: 0.25) {
+                //2
+                self.view.layoutIfNeeded()
+            }
+        }
+        marker.position = coordinate
+        let camera = GMSCameraPosition.camera(withLatitude: coordinate.latitude, longitude: coordinate.longitude, zoom: 15.0)
+        
+        marker.position = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        marker.title = ""
+        
+        marker.snippet = ""
+        
+        marker.icon = GMSMarker.markerImage(with: UIColor.green)
+        marker.map = mapView
+        showMarker(position: camera.target)
     }
     
 }

@@ -41,7 +41,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate , UNUserNotificationCenter
         var isRegisteredForLocalNotifications = UIApplication.shared.currentUserNotificationSettings?.types.contains(UIUserNotificationType.alert) ?? false
         print(isRegisteredForLocalNotifications)
         
-        
+        UINavigationBar.appearance().plainView.semanticContentAttribute = .forceRightToLeft
+
         var rootController: UIViewController?
         UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         UINavigationBar.appearance().layer.borderWidth = 0.0
@@ -51,9 +52,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate , UNUserNotificationCenter
         GMSServices.provideAPIKey(googleApiKey)
         GMSPlacesClient.provideAPIKey(googleApiKey)
         
-     //   FirebaseApp.configure()
+     
+        FirebaseApp.configure()
         
         Messaging.messaging().delegate = self
+        
         
         // Register for remote notifications. This shows a permission dialog on first run, to
         // show the dialog at a more appropriate time move this registration accordingly.
@@ -111,6 +114,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate , UNUserNotificationCenter
                 if let success = results["status"] as? Bool {
                     var ads_count =
                     userData["ads_count"] = results["count"] as? Int ?? 0
+                     userData["follower"] = results["follower"] as? Int ?? 0
+                     userData["following"] = results["following"] as? Int ?? 0
                     saveUserData(userData: userData as [String : AnyObject])
                 }
                 print(userData["ads_count"])
@@ -143,7 +148,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate , UNUserNotificationCenter
         print(parameters)
         
         var token_url = base_url + "update_token"
-        Alamofire.request(token_url, method: .post, parameters: parameters).responseJSON{
+        Alamofire.request(token_url, method: .get, parameters: parameters).responseJSON{
             (response) in
             print("tokenResponse\(response)")
             
@@ -180,10 +185,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate , UNUserNotificationCenter
         print("yarabopen\(userInfo)")
         //Track notification only if the application opened from Background by clicking on the notification.
         if application.applicationState == .inactive  {
-            /*
+            
             if let screenName = userInfo["targetScreen"] as? String {
-                if let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainView") as? mainViewController {
-                    controller.chatFlag = 1
+               
+                if let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController {
+                     if screenName == "notification" {
+                    controller.selected_index = 0
+                     }else if screenName == "message" {
+                         openChat = true
+                    controller.selected_index = 1
+                    }
                     if let window = self.window, let rootViewController = window.rootViewController {
                         var currentController = rootViewController
                         while let presentedController = currentController.presentedViewController {
@@ -193,17 +204,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate , UNUserNotificationCenter
                     }
                 }
                 
+                
             }
-            */
+ 
         }
         
         //The application was already active when the user got the notification, just show an alert.
         //That should *not* be considered open from Push.
         if application.applicationState == .active  {
-            //Capture notification data e.g. badge, alert and sound
-            print(userInfo["targetScreen"])
             
-            
+            if let screenName = userInfo["targetScreen"] as? String {
+                
+                if let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController {
+                    if screenName == "notification" {
+                        controller.selected_index = 0
+                    }else if screenName == "message" {
+                        openChat = true
+                        controller.selected_index = 1
+                    }
+                    if let window = self.window, let rootViewController = window.rootViewController {
+                        var currentController = rootViewController
+                        while let presentedController = currentController.presentedViewController {
+                            currentController = presentedController
+                        }
+                        currentController.present(controller, animated: true, completion: nil)
+                    }
+                }
+                
+                
+            }
             
         }
         
@@ -252,7 +281,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate , UNUserNotificationCenter
          application to it. This property is optional since there are legitimate
          error conditions that could cause the creation of the store to fail.
          */
-        let container = NSPersistentContainer(name: "Mazad")
+        let container = NSPersistentContainer(name: "wla_ashal")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.

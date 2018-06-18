@@ -42,7 +42,12 @@ class LoginViewController: SuperParentViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    @IBAction func forgetAction(_ sender: Any) {
+        let verificationView = self.storyboard?.instantiateViewController(withIdentifier: "verificationView") as? verificationViewController
+        self.navigationController?.pushViewController(verificationView!, animated: true)
+    }
     
+    @IBOutlet weak var forgetPassword: UIButton!
     
     @IBOutlet weak var userImage: UIImageView!
     @IBOutlet weak var homeBack: UIButton!
@@ -68,11 +73,13 @@ class LoginViewController: SuperParentViewController {
                         if let user_data = results["user"] as? [String:AnyObject] {
                             print(user_data)
                             userData = user_data
-                            if userData["driver"] as? Bool == true {
+                            if Int(userData["driver"] as? String ?? "0") == 1 {
                                 saveData(name: "driver")
+                                isTaxi = true
                             }
-                            if userData["delivery"] as? Bool  == true {
+                            if Int(userData["delivery"] as? String ?? "0")  == 1 {
                                 saveData(name: "delivery")
+                                isDelivery = true
                             }
                             saveUserData(userData: user_data as [String:AnyObject])
                             self.setNotification()

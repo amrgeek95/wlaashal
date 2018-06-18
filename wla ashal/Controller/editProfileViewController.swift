@@ -24,6 +24,7 @@ class editProfileViewController: SuperParentViewController  ,UITableViewDelegate
         cell?.emailText.text = userData["username"] as? String ?? ""
         cell?.mobileText.text = userData["mobile"] as? String ?? ""
         
+        
         cell?.parent = self
         return cell!
     }
@@ -38,6 +39,9 @@ class editProfileViewController: SuperParentViewController  ,UITableViewDelegate
     }
     override func viewWillAppear(_ animated: Bool) {
         
+        self.editTableView.delegate = self
+        self.editTableView.dataSource = self
+        self.navigationItem.title = "تعديل الحساب"
         
     }
     

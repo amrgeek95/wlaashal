@@ -27,6 +27,7 @@ class secondMapViewController: UIViewController , UITextFieldDelegate{
     var name = ""
     var shopname = ""
     var licensce = ""
+    
     @IBOutlet weak var confirmBtn: UIButton!
     
     @IBOutlet weak var mapView: GMSMapView!
@@ -60,15 +61,29 @@ class secondMapViewController: UIViewController , UITextFieldDelegate{
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
             addressTo.longtide = (locationManager.location?.coordinate.longitude)!
             addressTo.latitude = (locationManager.location?.coordinate.latitude)!
-            let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 6.0)
+            let camera = GMSCameraPosition.camera(withLatitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!, zoom: 15.0)
             mapView.camera = camera
+           
+            marker.position = CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!)
+            marker.title = "مكان الوصول"
             
+            marker.snippet = ""
+            
+            marker.icon = GMSMarker.markerImage(with: UIColor.green)
+            marker.map = mapView
             showMarker(position: camera.target)
         }else{
-            let camera = GMSCameraPosition.camera(withLatitude: 37.36, longitude: -122.0, zoom: 6.0)
-            mapView.camera = camera
+            let alertController = UIAlertController(title: NSLocalizedString("تنبية", comment: ""), message: NSLocalizedString("يجب السماح بتحديد المكان", comment: ""), preferredStyle: .alert)
             
-            showMarker(position: camera.target)
+            let cancelAction = UIAlertAction(title: NSLocalizedString("الغاء", comment: ""), style: .cancel, handler: nil)
+            let settingsAction = UIAlertAction(title: NSLocalizedString("الاعدادات", comment: ""), style: .default) { (UIAlertAction) in
+                UIApplication.shared.openURL(NSURL(string: UIApplicationOpenSettingsURLString)! as URL)
+            }
+            
+            
+            alertController.addAction(cancelAction)
+            alertController.addAction(settingsAction)
+            self.present(alertController, animated: true, completion: nil)
         }
     }
     @IBOutlet weak var searchText: UITextField!
@@ -154,6 +169,16 @@ extension secondMapViewController: GMSAutocompleteViewControllerDelegate {
         print("Place attributions: \(String(describing: place.attributions))")
         
         mapView.camera = GMSCameraPosition(target: place.coordinate, zoom: 15, bearing: 0, viewingAngle: 0)
+        let camera = GMSCameraPosition.camera(withLatitude: place.coordinate.latitude, longitude: place.coordinate.longitude, zoom: 15.0)
+        
+        marker.position = CLLocationCoordinate2D(latitude: place.coordinate.latitude, longitude: place.coordinate.longitude)
+        marker.title = "مكان الوصول"
+        
+        marker.snippet = ""
+        
+        marker.icon = GMSMarker.markerImage(with: UIColor.green)
+        marker.map = mapView
+        showMarker(position: camera.target)
         self.dismiss(animated: true, completion: nil)
     }
     func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
@@ -250,11 +275,11 @@ extension secondMapViewController: GMSMapViewDelegate {
         view.layer.cornerRadius = 6
         
         let lbl1 = UILabel(frame: CGRect.init(x: 8, y: 8, width: view.frame.size.width - 16, height: 15))
-        lbl1.text = "Hi there!"
+        lbl1.text = "مكان الوصول"
         view.addSubview(lbl1)
         
         let lbl2 = UILabel(frame: CGRect.init(x: lbl1.frame.origin.x, y: lbl1.frame.origin.y + lbl1.frame.size.height + 3, width: view.frame.size.width - 16, height: 15))
-        lbl2.text = "I am a custom info window."
+        lbl2.text = ""
         lbl2.font = UIFont.systemFont(ofSize: 14)
         view.addSubview(lbl2)
         return view
@@ -300,6 +325,17 @@ extension secondMapViewController: GMSMapViewDelegate {
                 self.view.layoutIfNeeded()
             }
         }
+        marker.position = coordinate
+        let camera = GMSCameraPosition.camera(withLatitude: coordinate.latitude, longitude: coordinate.longitude, zoom: 15.0)
+       
+        marker.position = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        marker.title = "مكان الوصول"
+        
+        marker.snippet = ""
+        
+        marker.icon = GMSMarker.markerImage(with: UIColor.green)
+        marker.map = mapView
+        showMarker(position: camera.target)
     }
     
 }

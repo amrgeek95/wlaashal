@@ -22,6 +22,9 @@ class usersChatTableViewCell: UITableViewCell {
     var otherId = ""
     var otherName = ""
     var parent:usersChatViewController!
+    
+    @IBOutlet weak var userIcon: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

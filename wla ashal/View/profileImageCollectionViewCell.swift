@@ -18,4 +18,7 @@ class profileImageCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var image: UIImageView!
     var id = ""
+    
+    
+    
 }

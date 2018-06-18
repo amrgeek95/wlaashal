@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>154151728438-1ok650tum4engeapo060trblirkrp68s.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.154151728438-1ok650tum4engeapo060trblirkrp68s</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDK6_DGxlxFp4hqP04Nir6B5NHYJ7bYpgg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>154151728438</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>wla.ashal</string>
+	<key>PROJECT_ID</key>
+	<string>wla-ashal-ios</string>
+	<key>STORAGE_BUCKET</key>
+	<string>wla-ashal-ios.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:154151728438:ios:db3054aa632c63f2</string>
+	<key>DATABASE_URL</key>
+	<string>https://wla-ashal-ios.firebaseio.com</string>
+</dict>
+</plist>

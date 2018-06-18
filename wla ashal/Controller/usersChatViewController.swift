@@ -86,6 +86,8 @@ class usersChatViewController: UIViewController,UITableViewDelegate ,UITableView
         cell?.chat_id = usersArray[indexPath.row]["chat_id"] as? String ?? ""
         cell?.otherId = usersArray[indexPath.row]["to_id"] as? String ?? ""
         cell?.otherName = usersArray[indexPath.row]["name"] as? String ?? ""
+         cell?.userIcon.sd_setImage(with: URL(string: usersArray[indexPath.row]["image"] as? String ?? "" ), placeholderImage: UIImage(named: "user"))
+        cell?.userIcon.ImageBorderCircle()
         cell?.notificationView.isHidden = true
         if usersArray[indexPath.row]["seen"] as? Bool == false {
          cell?.notificationView.isHidden = false

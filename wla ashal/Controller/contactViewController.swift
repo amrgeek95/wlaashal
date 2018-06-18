@@ -49,7 +49,22 @@ class contactViewController: SuperParentViewController  ,UITextViewDelegate{
     
     @IBAction func sendAction(_ sender: Any) {
         var parameters = [String: Any]()
-        
+        guard inputValidation(text: self.nameText.text!, message: "يجب كتابة الاسم", view: self.view) else{
+            
+            return
+        }
+        guard inputValidation(text: self.emailText.text!, message: "يجب كتابة البريد الالكتروني", view: self.view) else{
+            
+            return
+        }
+        guard inputValidation(text: self.titleText.text!, message: "يجب كتابة عنوان للرسالة", view: self.view) else{
+            
+            return
+        }
+        guard inputValidation(text: self.body.text!, message: "يجب كتابة محتوي الرسالة", view: self.view) else{
+            
+            return
+        }
         parameters["name"] = nameText.text
         
         parameters["email"] = emailText.text
@@ -62,15 +77,16 @@ class contactViewController: SuperParentViewController  ,UITextViewDelegate{
             print(response)
             if  let results = response.result.value as? [String:AnyObject] {
                 if let success = results["status"] as? Bool {
-                    if success == true {
-                        toastView(messsage:results["message"] as? String ?? "", view: self.view)
-                    }else{
-                        toastView(messsage:results["message"] as? String ?? "", view: self.view)
-                    }
-                    let initialMain = self.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
-                    initialMain?.selectedIndex = 1
                     
-                    self.present(initialMain!, animated: true, completion: nil)
+                    let alert = UIAlertController(title:results["message"] as? String ?? "", message: "", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "حسنا", style: UIAlertActionStyle.default, handler:{ (alert: UIAlertAction!) -> Void in
+                       
+                        let initialMain = self.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
+                        initialMain?.selectedIndex = 1
+                        self.present(initialMain!, animated: true, completion: nil)
+                    }
+                    ))
+                    self.present(alert, animated: true, completion: nil)
                 } else{
                     toastView(messsage:"حدث خطأ", view: self.view)
                     let initialMain = self.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController

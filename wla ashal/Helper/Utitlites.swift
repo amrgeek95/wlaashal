@@ -119,6 +119,13 @@ extension UIView {
         self.layer.borderWidth = border
         self.layer.cornerRadius = corner
     }
+    
+    func ViewborderRoundColor(border:CGFloat,corner:CGFloat,color:UIColor = UIColor.clear){
+      //  let myColor = UIColor.clear
+        self.layer.borderColor = color.cgColor
+        self.layer.borderWidth = border
+        self.layer.cornerRadius = corner
+    }
     func dropShadow(scale: Bool = true) {
         layer.masksToBounds = false
         layer.shadowColor = UIColor.black.cgColor
@@ -204,7 +211,7 @@ extension UITextView {
             } else if fontNameToTest.range(of: "ultralight") != nil {
                 fontName += "-UltraLight";
             }
-            self.font = UIFont(name: fontName, size: self.font?.pointSize ?? 13)
+           // self.font = UIFont(name: fontName, size: self.font?.pointSize ?? 13)
         }
     }
 }
@@ -464,16 +471,28 @@ func toastView(messsage : String, view: UIView ){
     toastLabel.alpha = 1.0
     toastLabel.layer.cornerRadius = 10;
     toastLabel.clipsToBounds  =  true
-    UIView.animate(withDuration: 4.0, delay: 0.1, options: UIViewAnimationOptions.curveEaseOut, animations: {
+    UIView.animate(withDuration: 5.0, delay: 1, options: UIViewAnimationOptions.curveEaseOut, animations: {
         toastLabel.alpha = 0.0
         
     })
+}
+
+public class AlertFun {
+    class func ShowAlert(title: String, message: String, in vc: UIViewController) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "حسنا", style: UIAlertActionStyle.default, handler: nil))
+        vc.present(alert, animated: true, completion: nil)
+    }
+}
+func showAlert(messsage : String, view: UIView ){
+    
 }
 func inputValidation(text: String,message:String ,view:UIView) -> Bool{
     
     if text.isEmpty{
         
         toastView(messsage: message, view: view)
+        
         return false
     }
     

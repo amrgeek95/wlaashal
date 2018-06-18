@@ -8,8 +8,8 @@
 
 import UIKit
 
-class mainTabBarViewController: UITabBarController {
-
+class mainTabBarViewController: UITabBarController ,UITabBarControllerDelegate{
+    var selected_index = 3
     override func viewDidLoad() {
         super.viewDidLoad()
         var barItems = self.tabBar.items
@@ -24,7 +24,7 @@ class mainTabBarViewController: UITabBarController {
         
         let item1 = barItems?[0]
         item1?.title = ""
-        item1?.image = UIImage(named: "comment_co")
+        item1?.image = UIImage(named: "notification")
         
         let item2 = barItems?[1]
         item2?.title = ""
@@ -47,10 +47,43 @@ class mainTabBarViewController: UITabBarController {
         // Dispose of any resources that can be recreated.
     }
     override func viewWillAppear(_ animated: Bool) {
-        self.selectedIndex = 3
+        self.delegate = self
+        if selected_index == 2 {
+            
+        }else{
+            
+        }
+        self.selectedIndex = selected_index
     }
     
-
+    // UITabBarDelegate
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+   // tabBar.selec
+        print(self.selectedIndex)
+        
+    }
+    
+    // UITabBarControllerDelegate
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        if  tabBarController.selectedIndex == 2 {
+            searchView = true
+              if let firstVC = viewController as? homeViewController {
+            firstVC.topHeader.isHidden = true
+            firstVC.topNavHeight.constant = 0
+            }
+        }else{
+             if  tabBarController.selectedIndex == 3 {
+                if let firstVC = viewController as? homeViewController {
+                    firstVC.topHeader.isHidden = false
+                    firstVC.topNavHeight.constant = 140
+                }
+            }
+            
+            searchView = false
+        }
+        print(tabBarController.selectedIndex)
+        
+    }
     /*
     // MARK: - Navigation
 

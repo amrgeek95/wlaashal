@@ -116,15 +116,18 @@ class addProductTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePickerD
                     MBProgressHUD.hide(for: self.parent.view, animated: true)
                     if let results = response.result.value as? [String:AnyObject]{
                         if let result_image = results["images"] as? [String] {
-                            self.imageArray = result_image
-                            self.parent.image = result_image
+                            for image_key in result_image {
+                                self.imageArray.append(image_key)
+                            }
+                            self.parent.image = self.imageArray
                             self.imageCollectionView.reloadData()
                             
                         }else{
                             print("why")
                             
                             MBProgressHUD.hide(for: self.parent.view, animated: true)
-                            wla_ashal.toastView(messsage: "حدث خطأ اعد المحاولة", view: self.parent.view)
+                                AlertFun.ShowAlert(title: "تنبية", message: "حدث خطأ اعد المحاولة", in: self.parent)
+                           
                         }
                     }
                     
@@ -132,8 +135,7 @@ class addProductTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePickerD
             case .failure(let error):
                 print(error)
                 MBProgressHUD.hide(for: self.parent.view, animated: true)
-                wla_ashal.toastView(messsage: "حدث خطأ اعد المحاولة", view: self.parent.view)
-            }
+                AlertFun.ShowAlert(title: "تنبية", message: "حدث خطأ اعد المحاولة", in: self.parent)            }
             
         })
         imagePicker.dismiss(animated: true, completion: nil)
@@ -143,7 +145,8 @@ class addProductTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePickerD
     }
     @IBAction func submitAction(_ sender: Any) {
         var parameters = [String:AnyObject]()
-       
+       print(category_id)
+        
         guard inputValidation(text: self.titleText.text!, message: "يجب كتابة عنوان للأعلان", view: self.parent.view) else{
             
             return
@@ -155,30 +158,40 @@ class addProductTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePickerD
             return
         }
         if bodyTextView.textColor == UIColor.lightGray {
-            wla_ashal.toastView(messsage: "يجب كتابة محتوي الاعلان", view: self.parent.view)
+              wla_ashal.toastView(messsage: "يجب كتابة محتوي الاعلان", view: self.parent.view)
             return
+        }
+        if (addressText.text?.isEmpty)!{
+            wla_ashal.toastView(messsage: "يجب كتابة عنوان المستخدم", view: self.parent.view)
+                return
         }
         guard inputValidation(text: bodyTextView.text!, message: "يجب كتابة محتوي الاعلان", view: self.parent.view) else{
             return
         }
         guard !imageArray.isEmpty else {
-            wla_ashal.toastView(messsage: "يجب رفع صورة واحدة علي الاقل", view: self.parent.view)
+            AlertFun.ShowAlert(title: "تنبية", message: "يجب رفع صورة واحدة علي الاقل", in: self.parent)
+           // wla_ashal.toastView(messsage: "يجب رفع صورة واحدة علي الاقل", view: self.parent.view)
             return
         }
         
         parameters["name"] = titleText.text as AnyObject
         parameters["user_id"] = userData["id"] as AnyObject
-        parameters["category_id"] = category_id as AnyObject
         parameters["longtide"] = parent.myLocation.longtide as AnyObject
         parameters["latitude"] = parent.myLocation.latitude as AnyObject
         parameters["city"] = parent.myLocation.city as AnyObject
         parameters["address"] = parent.myLocation.address as AnyObject
         parameters["category_id"] = category_id as AnyObject
-        
+        /*
         if sub_id == "" {
             
             sub_id  = subCategory.selectedItem as? String ?? ""
         }
+        */
+        if sub_id == "" {
+            wla_ashal.toastView(messsage: "يجب اختيار قسم فرعي", view: self.parent.view)
+            return
+        }
+        
         parameters["subcategory_id"] = sub_id as AnyObject
         parameters["body"] = bodyTextView.text as AnyObject
         parameters["images"] = imageArray as AnyObject
@@ -196,11 +209,20 @@ class addProductTableViewCell: UITableViewCell ,UITextViewDelegate ,ImagePickerD
                 print(results)
                 
                 if results["status"] as? Bool == true {
-                    self.parent.view.makeToast("تم اضافة الاعلان")
-                    let initialMain = self.parent.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
-                    initialMain?.selectedIndex = 1
-                   
-                    self.parent.present(initialMain!, animated: true, completion: nil)
+                    let alert = UIAlertController(title: "تم اضافة الاعلان", message: "", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "حسنا", style: UIAlertActionStyle.default, handler:{ (alert: UIAlertAction!) -> Void in
+                        var new_count = Int("\(userData["ads_count"] as? Int ?? 0)")
+                        print(new_count)
+                        userData["ads_count"] = new_count! + 1
+                        saveUserData(userData: userData as [String : AnyObject])
+                        print(userData["ads_count"])
+                        let initialMain = self.parent.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
+                        initialMain?.selectedIndex = 1
+                        self.parent.present(initialMain!, animated: true, completion: nil)
+                    }
+                    ))
+                    self.parent.present(alert, animated: true, completion: nil)
+                  
                 }
             }
         }

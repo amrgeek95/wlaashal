@@ -11,10 +11,23 @@ import Alamofire
 import Toast
 import MBProgressHUD
 class notificationViewController: SuperParentViewController , UITableViewDelegate , UITableViewDataSource {
+    
+    @IBOutlet weak var changeBtn: UISegmentedControl!
+    var request_type = 0
+    @IBAction func changeAction(_ sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 1 {
+            request_type = 1
+            get_notification(my_request: true)
+        }else{
+            request_type = 0
+            get_notification(my_request: false)
+        }
+    }
     var notification = [Dictionary<String,AnyObject>]()
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return notification.count
     }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         return 100
@@ -39,6 +52,14 @@ class notificationViewController: SuperParentViewController , UITableViewDelegat
         cell.userImage.ImageBorderCircle()
         cell.containerView.ViewborderRound(border: 0.2, corner: 20)
         cell.containerView.dropShadow()
+        if request_type == 0 {
+            
+            cell.typeLabel.isHidden = true
+        }else{
+            cell.typeLabel.isHidden = false
+            cell.typeLabel.text = notification[indexPath.row]["type_label"] as? String ?? ""
+        }
+        
         return cell
     }
     
@@ -50,32 +71,56 @@ class notificationViewController: SuperParentViewController , UITableViewDelegat
         // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {
+        request_type = 0
         if checkUserData(){
-         
-            self.get_notification()
+            
+            get_notification(my_request: false)
+            if isDelivery == true {
+                 self.changeBtn.isHidden = false
+            }else if isTaxi == true {
+                 self.changeBtn.isHidden = false
+            }else {
+                self.changeBtn.isHidden = true
+            }
+           
+        }else{
+           self.changeBtn.isHidden = true
         }
+        UISegmentedControl.appearance().setTitleTextAttributes([NSForegroundColorAttributeName:UIColor(red: 106/255, green: 163/255, blue: 147/255, alpha: 1.0)], for: .normal)
+        UISegmentedControl.appearance().setTitleTextAttributes([NSForegroundColorAttributeName:UIColor.white], for: .selected)
         self.navigationItem.title = "الاشعارات"
+        self.changeBtn.setTitle("طلباتي", forSegmentAt: 1)
+        self.changeBtn.selectedSegmentIndex = 0
+        self.changeBtn.setTitle("طلبات العملاء", forSegmentAt: 0)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    func get_notification(){
+    func get_notification(my_request:Bool = false){
         self.notification.removeAll()
         var parameters = [String:Any]()
+        var onlyme = true
+        if my_request == true {
+            parameters["type"] = 0
+        }
         if isDelivery == true {
+            onlyme = false
             parameters["taxi"] = true
         }
         if isTaxi == true {
             parameters["delivery"] =  true
+             onlyme = false
         }
       
-       
+        if onlyme == true {
+            parameters["type"] = 0
+        }
         parameters["user_id"] = userData["id"]
         let notification_url = base_url + "notifications"
         print(parameters)
-        
+MBProgressHUD.showAdded(to: self.view, animated: true)
         Alamofire.request(notification_url, method: .get, parameters: parameters).responseJSON{
             (response) in
             MBProgressHUD.hide(for: self.view,animated:true)
@@ -97,6 +142,19 @@ class notificationViewController: SuperParentViewController , UITableViewDelegat
                         each_list["date"] =  str["date"] as AnyObject
                         each_list["message"] =  str["message"] as AnyObject
                         each_list["type"] =  str["type"] as AnyObject
+                       var textlabel = ""
+                        if each_list["type"] as? String == "taxi"{
+                            textlabel = "تاكسي "
+                        } else {
+                              textlabel = "توصيل "
+                        }
+                        if str["user_id"] as? String !=  userData["id"] as? String{
+                            each_list["type_label"] = textlabel + " - طلب وارد " as AnyObject
+                        }else{
+                            each_list["type_label"] = textlabel + " - طلب صادر " as AnyObject
+                            
+                        }
+                       
                         self.notification.append(each_list)
                         
                         

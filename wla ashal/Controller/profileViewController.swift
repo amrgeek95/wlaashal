@@ -30,10 +30,10 @@ class profileViewController: SuperParentViewController , UITableViewDelegate , U
         cell?.image.sd_setImage(with: URL(string: products[indexPath.row]["image"] as? String ?? "" ), placeholderImage: UIImage(named: "car_d"))
         
         cell?.titleLabel.text = products[indexPath.row]["name"] as? String ?? ""
-        cell?.containerView.ViewborderRound(border: 1, corner: 15)
-        cell?.containerView.dropShadow(color: UIColor.gray, opacity: 0.7, radius: 5)
+        cell?.containerView.ViewborderRoundColor(border: 0.5, corner: 15,color: UIColor.lightGray)
+      //  cell?.containerView.dropShadow(color: UIColor.gray, opacity: 0.7, radius: 5)
       //  cell?.contentView.dropShadow(color: UIColor.gray, radius: 10)
-      //  cell?.contentView.ViewborderRound(border: 0.5, corner: 10)
+        cell?.contentView.ViewborderRound(border: 5, corner: 10)
       
         if mySelf == false {
             cell?.deleteBtn.isHidden = true
@@ -42,6 +42,8 @@ class profileViewController: SuperParentViewController , UITableViewDelegate , U
         }else{
             cell?.deleteBtn.isHidden = false
             cell?.editBtn.isHidden = false
+            cell?.editBtn.tag = indexPath.row
+             cell?.editBtn.addTarget(nil, action: #selector(self.edit_product(sender:)), for: .touchUpInside)
             print(products[indexPath.row]["id"] as? Int ?? 0)
              cell?.userReview.isHidden = true
             
@@ -137,6 +139,7 @@ class profileViewController: SuperParentViewController , UITableViewDelegate , U
                 
                 cell.pointsNumber.setBackgroundImage(nil, for: .normal)
                 cell.pointsNumber.setImage(UIImage(named:"follow"), for: .normal)
+                
                 cell.codeBtn.addTarget(nil, action: #selector(self.addReview(sender:)), for: .touchUpInside)
                 cell.codeBtn.setTitle("تقييم", for: .normal)
                 cell.userReview.rating = otherUser["rate"] as? Float ?? 5
@@ -145,7 +148,20 @@ class profileViewController: SuperParentViewController , UITableViewDelegate , U
                 cell.codeLabel.text = ""
                  cell.userReview.isHidden = false
                 cell.pointLabel.text = "متابعة"
+                print(otherUser["followed"])
+                let followGesture = UITapGestureRecognizer(target:self,action:#selector(followLabelClick(sender:)))
+                cell.pointLabel.isUserInteractionEnabled = true
+                cell.pointLabel.addGestureRecognizer(followGesture)
+                if otherUser["followed"] as? Int == 1 {
+                    cell.pointLabel.text = "الغاء المتابعة"
+                }
                 cell.codeBtn.isHidden = false
+                 cell.userReview.rating = Float(otherUser["rate"] as? String ?? "5")!
+                print(otherUser["follower"])
+                 print(otherUser["follower"])
+                
+                cell.followersNumber.setTitle("\(otherUser["follower"] as? Int ?? 0)", for: .normal)
+                cell.followingNumber.setTitle("\(otherUser["following"] as? Int ?? 0)", for: .normal)
             }else{
                 cell.callImg.isHidden = true
                 cell.chatImage.isHidden = true
@@ -153,11 +169,16 @@ class profileViewController: SuperParentViewController , UITableViewDelegate , U
                 cell.pointsNumber.setBackgroundImage(UIImage(named:"Hexa"), for: .normal)
                 cell.pointsNumber.setImage(nil, for: .normal)
                 cell.pointsNumber.setTitle("0", for: .normal)
+                //cell.pointLabel.isUserInteractionEnabled = false
                 cell.pointLabel.text = "عدد النقاط"
-                 cell.userReview.isHidden = true
-               
-                cell.userReview.rating = userData["rate"] as? Float ?? 5
-                 cell.codeViewHeightConstraint.constant = 50
+                cell.userReview.isHidden = true
+                print(userData["follower"])
+                print(userData["follower"])
+                cell.userReview.rating = Float(userData["rate"] as? String ?? "5")!
+                cell.codeViewHeightConstraint.constant = 50
+                cell.codeLabel.text = userData["code"] as? String ?? "1312sd"
+                cell.followersNumber.setTitle("\(userData["follower"] as? Int ?? 0)", for: .normal)
+                cell.followingNumber.setTitle("\(userData["following"] as? Int ?? 0)", for: .normal)
             }
             cell.parent = self
             return cell
@@ -166,13 +187,19 @@ class profileViewController: SuperParentViewController , UITableViewDelegate , U
             cell.parent = self
             cell.imageCollectionView.delegate = self
             cell.imageCollectionView.dataSource = self
+            
 
             return cell
         }
         
     }
     func addReview(sender:UIButton){
-        self.performSegue(withIdentifier: "showAddReview", sender: nil)
+        if checkUserData() {
+         
+            self.performSegue(withIdentifier: "showAddReview", sender: nil)
+        }else{
+            wla_ashal.toastView(messsage: "يجب عليك تسجيل الدخول اولا", view: self.view)
+        }
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let toViewController = segue.destination as? addReviewViewController {
@@ -208,11 +235,14 @@ class profileViewController: SuperParentViewController , UITableViewDelegate , U
             print(error.localizedDescription)
         }
     }
-    func follow_user(sender:UIButton){
+    func followLabelClick(sender:UITapGestureRecognizer){
+        follow_user_func()
+    }
+    func follow_user_func(){
         MBProgressHUD.showAdded(to: self.view, animated: true)
         var parameters = [String: Any]()
-         parameters["user_id"] = userData["id"]
-         parameters["to_id"] = user_id
+        parameters["user_id"] = userData["id"]
+        parameters["to_id"] = user_id
         print(parameters)
         let cart_url = base_url + "follow"
         Alamofire.request(cart_url, method: .get, parameters: parameters).responseJSON{
@@ -222,13 +252,45 @@ class profileViewController: SuperParentViewController , UITableViewDelegate , U
             if  let results = response.result.value as? [String:AnyObject] {
                 if let success = results["status"] as? Bool {
                     if success == true {
-                         self.profileTableView.reloadData()
-                        wla_ashal.toastView(messsage: results["message"] as? String ?? "", view: self.view)
+                        let count = results["count"] as? Int ?? 0
+                        var other_count = self.otherUser["follower"] as? Int ?? 0
+                        var my_count = userData["following"] as? Int ?? 0
+                        if results["count"] as? Bool == true {
+                            
+                            
+                            userData["following"] = my_count + 1
+                            self.otherUser["follower"] = other_count + 1 as AnyObject
+                            saveUserData(userData: userData as [String : AnyObject])
+                            self.otherUser["followed"] =  1 as AnyObject
+                        } else {
+                            userData["following"] = my_count - 1
+                            self.otherUser["follower"] = other_count - 1 as AnyObject
+                            saveUserData(userData: userData as [String : AnyObject])
+                            self.otherUser["followed"] =  0 as AnyObject
+                        }
+                        
+                        let alert = UIAlertController(title: results["message"] as? String ?? "", message: "", preferredStyle: UIAlertControllerStyle.alert)
+                        alert.addAction(UIAlertAction(title: "حسنا", style: UIAlertActionStyle.default, handler:{ (alert: UIAlertAction!) -> Void in
+                            self.profileTableView.reloadData()
+                        }
+                        ))
+                        self.present(alert, animated: true, completion: nil)
+                        self.profileTableView.reloadData()
                     }
                 }
             }
             
         }
+    }
+    func follow_user(sender:UIButton){
+        follow_user_func()
+    }
+    func edit_product(sender:UIButton){
+        MBProgressHUD.showAdded(to: self.view, animated: true)
+        var parameters = [String: Any]()
+        let editProduct = self.storyboard?.instantiateViewController(withIdentifier: "editProductView") as? editProductViewController
+        editProduct?.product_id = self.products[sender.tag]["id"] as? String ?? ""
+        self.navigationController?.pushViewController(editProduct!, animated: true)
     }
     func delete_product(sender:UIButton){
         MBProgressHUD.showAdded(to: self.view, animated: true)
@@ -244,6 +306,10 @@ class profileViewController: SuperParentViewController , UITableViewDelegate , U
             if  let results = response.result.value as? [String:AnyObject] {
                 if let success = results["status"] as? Bool {
                     if success == true {
+                        var new_count = Int("\(userData["ads_count"] as? Int ?? 0)")
+                        print(new_count)
+                        userData["ads_count"] = new_count! - 1
+                        saveUserData(userData: userData as [String : AnyObject])
                        self.products.remove(at: sender.tag)
                         self.profileTableView.reloadData()
                     }
@@ -256,11 +322,13 @@ class profileViewController: SuperParentViewController , UITableViewDelegate , U
         MBProgressHUD.showAdded(to: self.view, animated: true)
         var parameters = [String: Any]()
         if user_id != "" {
-            
+            parameters["user_id"] = userData["id"]
             parameters["id"] = user_id
         }else{
+            parameters["user_id"] = userData["id"]
             parameters["id"] = userData["id"]
         }
+      
         print(parameters)
         let cart_url = base_url + "get_user"
         Alamofire.request(cart_url, method: .get, parameters: parameters).responseJSON{
@@ -309,6 +377,46 @@ class profileViewController: SuperParentViewController , UITableViewDelegate , U
         Alamofire.request(url, method: .get, parameters: parameters).responseJSON{
             (response) in
             MBProgressHUD.hide(for: self.view,animated:true)
+            var statusCode = response.response?.statusCode
+            if let error = response.result.error as? AFError {
+                statusCode = error._code // statusCode private
+                switch error {
+                case .invalidURL(let url):
+                    print("Invalid URL: \(url) - \(error.localizedDescription)")
+                case .parameterEncodingFailed(let reason):
+                    print("Parameter encoding failed: \(error.localizedDescription)")
+                    print("Failure Reason: \(reason)")
+                case .multipartEncodingFailed(let reason):
+                    print("Multipart encoding failed: \(error.localizedDescription)")
+                    print("Failure Reason: \(reason)")
+                case .responseValidationFailed(let reason):
+                    print("Response validation failed: \(error.localizedDescription)")
+                    print("Failure Reason: \(reason)")
+                    
+                    switch reason {
+                    case .dataFileNil, .dataFileReadFailed:
+                        print("Downloaded file could not be read")
+                    case .missingContentType(let acceptableContentTypes):
+                        print("Content Type Missing: \(acceptableContentTypes)")
+                    case .unacceptableContentType(let acceptableContentTypes, let responseContentType):
+                        print("Response content type: \(responseContentType) was unacceptable: \(acceptableContentTypes)")
+                    case .unacceptableStatusCode(let code):
+                        print("Response status code was unacceptable: \(code)")
+                        statusCode = code
+                    }
+                case .responseSerializationFailed(let reason):
+                    print("Response serialization failed: \(error.localizedDescription)")
+                    print("Failure Reason: \(reason)")
+                    // statusCode = 3840 ???? maybe..
+                }
+                print("Underlying error: \(error.underlyingError)")
+            } else if let error = response.result.error as? URLError {
+                print("URLError occurred: \(error)")
+            } else {
+                print("Unknown error: \(response.result.error)")
+            }
+            
+            print(statusCode) // the status code
             if let results = response.result.value as? [String:AnyObject]{
                 print(results)
                 

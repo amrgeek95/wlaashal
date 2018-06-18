@@ -89,8 +89,10 @@ class deliveryRegisterTableViewCell: UITableViewCell ,UITextViewDelegate ,ImageP
                     MBProgressHUD.hide(for: self.parent.view, animated: true)
                     if let results = response.result.value as? [String:AnyObject]{
                         if let result_image = results["images"] as? [String] {
-                            self.imageArray = result_image
-                            self.parent.image = result_image
+                            for image_key in result_image {
+                                self.imageArray.append(image_key)
+                            }
+                            self.parent.image = self.imageArray
                             self.imageCollectionView.reloadData()
                             
                         }else{
@@ -117,23 +119,23 @@ class deliveryRegisterTableViewCell: UITableViewCell ,UITextViewDelegate ,ImageP
     @IBAction func submitAction(_ sender: Any) {
         var parameters = [String:AnyObject]()
         self.saveBtn.isEnabled = false
-        guard inputValidation(text: self.titleText.text!, message: "يجب كتابة عنوان للأعلان", view: self.parent.view) else{
+        guard inputValidation(text: self.titleText.text!, message: "يجب كتابة العنوان ", view: self.parent.view) else{
             self.saveBtn.isEnabled = true
             return
         }
         let title = self.titleText.text!
         print("titlLEngth\(title.length)")
         if title.length > 30 {
-            wla_ashal.toastView(messsage: "عنوان الاعلان طويل جدا", view: self.parent.view)
+            wla_ashal.toastView(messsage: "العنوان  طويل جدا", view: self.parent.view)
             self.saveBtn.isEnabled = true
             return
         }
         if bodyTextView.textColor == UIColor.lightGray {
-            wla_ashal.toastView(messsage: "يجب كتابة محتوي الاعلان", view: self.parent.view)
+            wla_ashal.toastView(messsage: "يجب كتابة المحتوي ", view: self.parent.view)
             self.saveBtn.isEnabled = true
             return
         }
-        guard inputValidation(text: bodyTextView.text!, message: "يجب كتابة محتوي الاعلان", view: self.parent.view) else{
+        guard inputValidation(text: bodyTextView.text!, message: "يجب كتابة المحتوي ", view: self.parent.view) else{
             self.saveBtn.isEnabled = true
             return
         }
@@ -162,12 +164,19 @@ class deliveryRegisterTableViewCell: UITableViewCell ,UITextViewDelegate ,ImageP
             if let results = response.result.value as? [String:AnyObject]{
                 print(results)
                 if results["status"] as? Bool == true {
-                    self.parent.view.makeToast("تم تسجيل الطلب")
-                    let initialMain = self.parent.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
-                    initialMain?.selectedIndex = 1
-                    saveData(name: "delivery")
-                    isDelivery = true
-                    self.parent.present(initialMain!, animated: true, completion: nil)
+                   
+                    let alert = UIAlertController(title: "تم تسجيل الطلب", message: "", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "حسنا", style: UIAlertActionStyle.default, handler:{ (alert: UIAlertAction!) -> Void in
+                        let initialMain = self.parent.storyboard?.instantiateViewController(withIdentifier: "mainTabBar") as? mainTabBarViewController
+                        initialMain?.selectedIndex = 1
+                        saveData(name: "delivery")
+                        isDelivery = true
+                        self.parent.present(initialMain!, animated: true, completion: nil)
+                        }
+                    ))
+                    self.parent.present(alert, animated: true, completion: nil)
+                    
+                   
                 }
             }
         }
